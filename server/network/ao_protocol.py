@@ -238,20 +238,24 @@ class AOProtocol(asyncio.Protocol):
                                      self.ArgType.INT, self.ArgType.INT, self.ArgType.INT, self.ArgType.INT,
                                      self.ArgType.INT, self.ArgType.INT, self.ArgType.INT):
             return
-        msg_type, pre, folder, anim, text, pos, sfx, anim_type, cid1, sfx_delay, button, unk, cid2, ding, color = args
+        msg_type, pre, folder, anim, text, pos, sfx, anim_type, cid, sfx_delay, button, evidence, flip, ding, color = args
         if msg_type != 'chat':
             return
         if anim_type not in (0, 1, 2, 5, 6):
             return
-        if cid1 != cid2 or cid1 != self.client.char_id:
+        if cid != self.client.char_id:
             return
         if sfx_delay < 0:
             return
-        if button not in (0, 1, 2, 3):
+        if button not in (0, 1, 2, 3, 4):
+            return
+        if evidence < 0:
+            return
+        if flip not in (0, 1):
             return
         if ding not in (0, 1):
             return
-        if color not in (0, 1, 2, 3, 4):
+        if color not in (0, 1, 2, 3, 4, 5):
             return
         if color == 2 and not self.client.is_mod:
             color = 0
@@ -261,8 +265,9 @@ class AOProtocol(asyncio.Protocol):
             if pos not in ('def', 'pro', 'hld', 'hlp', 'jud', 'wit'):
                 return
         msg = text[:256]
-        self.client.area.send_command('MS', msg_type, pre, folder, anim, msg, pos, sfx, anim_type, cid1,
-                                      sfx_delay, button, unk, cid2, ding, color)
+        evidence = 0  # TODO implement evidence
+        self.client.area.send_command('MS', msg_type, pre, folder, anim, msg, pos, sfx, anim_type, cid,
+                                      sfx_delay, button, evidence, flip, ding, color)
         self.client.area.set_next_msg_delay(len(msg))
         logger.log_server('[IC][{}][{}]{}'.format(self.client.area.id, self.client.get_char_name(), msg), self.client)
 
