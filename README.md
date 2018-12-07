@@ -21,6 +21,7 @@ I hope to implement those and more in time. These are:
 * AO2 Feature Support
 * Websockets
 * Modcall reason
+* Built-in support for Areas
 * Improved banlist (SQLite)
 * Server voting (SQLite)
 * REST API
