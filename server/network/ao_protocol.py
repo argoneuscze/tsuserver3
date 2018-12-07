@@ -55,8 +55,6 @@ class AOProtocol(asyncio.Protocol):
         if len(self.buffer) > 8192:
             self.client.disconnect()
         for msg in self.get_messages():
-            print('RCV: {}'.format(msg))  # TODO debug
-
             if len(msg) < 2:
                 self.client.disconnect()
                 return
@@ -68,6 +66,8 @@ class AOProtocol(asyncio.Protocol):
                 msg = '#'.join([fanta_decrypt(spl[0])] + spl[1:])
                 logger.log_debug('[INC][RAW]{}'.format(msg), self.client)
             try:
+                print('RCV: {}'.format(msg))  # TODO debug
+
                 cmd, *args = msg.split('#')
                 self.net_cmd_dispatcher[cmd](self, args)
             except KeyError:
@@ -154,6 +154,22 @@ class AOProtocol(asyncio.Protocol):
         self.ping_timeout.cancel()
         self.ping_timeout = asyncio.get_event_loop().call_later(self.server.config['timeout'], self.client.disconnect)
 
+    def net_cmd_id(self, args):
+        """ Client software and version
+
+        ID#<software:string>#<version:string>#%
+
+        """
+        if not self.validate_net_cmd(args, self.ArgType.STR, self.ArgType.STR, needs_auth=False):
+            self.client.disconnect()
+
+        client, version = args
+
+        if client == 'AO2':
+            # TODO remove this once AO2 gets rid of FL
+            self.client.send_command('FL', 'yellowtext', 'customobjections', 'flipping', 'fastloading', 'noencryption',
+                                     'deskmod', 'evidence')
+
     def net_cmd_askchaa(self, _):
         """ Ask for the counts of characters/evidence/music
 
@@ -162,52 +178,34 @@ class AOProtocol(asyncio.Protocol):
         """
         char_cnt = len(self.server.char_list)
         evi_cnt = 0
-        music_cnt = sum([len(x) for x in self.server.music_pages_ao1])
+        music_cnt = 0
         self.client.send_command('SI', char_cnt, evi_cnt, music_cnt)
 
-    def net_cmd_askchar2(self, _):
-        """ Asks for the character list.
+    def net_cmd_rc(self, _):
+        """ Asks for the character list. TODO
 
-        askchar2#%
-
-        """
-        self.client.send_command('CI', *self.server.char_pages_ao1[0])
-
-    def net_cmd_an(self, args):
-        """ Asks for specific pages of the character list.
-
-        AN#<page:int>#%
+        RC#%
 
         """
-        if not self.validate_net_cmd(args, self.ArgType.INT, needs_auth=False):
-            return
-        if len(self.server.char_pages_ao1) > args[0] >= 0:
-            self.client.send_command('CI', *self.server.char_pages_ao1[args[0]])
-        else:
-            self.client.send_command('EM', *self.server.music_pages_ao1[0])
+        self.client.send_command('SC', *self.server.char_list)
 
-    def net_cmd_ae(self, _):
-        """ Asks for specific pages of the evidence list.
+    def net_cmd_rm(self, _):
+        """ Asks for the music list. TODO
 
-        AE#<page:int>#%
+        RM#%
 
         """
-        pass  # todo evidence maybe later
+        self.client.send_command('SM', *self.server.music_list_network)
 
-    def net_cmd_am(self, args):
-        """ Asks for specific pages of the music list.
+    def net_cmd_rd(self, _):
+        """ Client is ready. TODO
 
-        AM#<page:int>#%
+        RD#%
 
         """
-        if not self.validate_net_cmd(args, self.ArgType.INT, needs_auth=False):
-            return
-        if len(self.server.music_pages_ao1) > args[0] >= 0:
-            self.client.send_command('EM', *self.server.music_pages_ao1[args[0]])
-        else:
-            self.client.send_done()
-            self.client.send_area_list()
-            self.client.send_motd()
+        self.client.send_done()
+        self.client.send_area_list()
+        self.client.send_motd()
 
     def net_cmd_cc(self, args):
         """ Character selection.
@@ -354,6 +352,24 @@ class AOProtocol(asyncio.Protocol):
         except AreaError:
             return
 
+    def net_cmd_pe(self, args):
+        """ Adds a piece of evidence. TODO
+        PE#<name:string>#<description:string>#<image:string>#%
+        """
+        ...
+
+    def net_cmd_de(self, args):
+        """ Deletes a piece of evidence. TODO
+        DE#<id:int>#%
+        """
+        ...
+
+    def net_cmd_ee(self, args):
+        """ Edits a piece of evidence. TODO
+        EE#<id:int>#<name:string>#<description:string>#<image:string>#%
+        """
+        ...
+
     def net_cmd_zz(self, _):
         """ Sent on mod call.
 
@@ -372,17 +388,20 @@ class AOProtocol(asyncio.Protocol):
     net_cmd_dispatcher = {
         'HI': net_cmd_hi,  # handshake
         'CH': net_cmd_ch,  # keepalive
+        'ID': net_cmd_id,  # client version
         'askchaa': net_cmd_askchaa,  # ask for list lengths
-        'askchar2': net_cmd_askchar2,  # ask for list of characters
-        'AN': net_cmd_an,  # character list
-        'AE': net_cmd_ae,  # evidence list
-        'AM': net_cmd_am,  # music list
+        'RC': net_cmd_rc,  # character list
+        'RM': net_cmd_rm,  # music list
+        'RD': net_cmd_rd,  # client is ready
         'CC': net_cmd_cc,  # select character
         'MS': net_cmd_ms,  # IC message
         'CT': net_cmd_ct,  # OOC message
         'MC': net_cmd_mc,  # play song
         'RT': net_cmd_rt,  # WT/CE buttons
         'HP': net_cmd_hp,  # penalties
+        'PE': net_cmd_pe,  # add evidence
+        'DE': net_cmd_de,  # delete evidence
+        'EE': net_cmd_ee,  # edit evidence
         'ZZ': net_cmd_zz,  # call mod button
         'opKICK': net_cmd_opKICK,  # /kick with guard on
         'opBAN': net_cmd_opBAN,  # /ban with guard on

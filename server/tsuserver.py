@@ -39,9 +39,8 @@ class TsuServer3:
         self.software = 'tsuserver3_origin'
         self.software_version = (1, 0, 0)
         self.char_list = None
-        self.char_pages_ao1 = None
         self.music_list = None
-        self.music_pages_ao1 = None
+        self.music_list_network = None
         self.backgrounds = None
         self.config = None
         self.load_config()
@@ -109,37 +108,20 @@ class TsuServer3:
     def load_characters(self):
         with open('config/characters.yaml', 'r') as chars:
             self.char_list = yaml.load(chars)
-        self.build_char_pages_ao1()
 
     def load_music(self):
         with open('config/music.yaml', 'r') as music:
             self.music_list = yaml.load(music)
-        self.build_music_pages_ao1()
+        # populate song list including areas
+        network_music_list = [area.name for area in self.area_manager.areas]
+        for item in self.music_list:
+            network_music_list.append(item['category'])
+            network_music_list.extend([song['name'] for song in item['songs']])
+        self.music_list_network = network_music_list
 
     def load_backgrounds(self):
         with open('config/backgrounds.yaml', 'r') as bgs:
             self.backgrounds = yaml.load(bgs)
-
-    def build_char_pages_ao1(self):
-        self.char_pages_ao1 = [self.char_list[x:x + 10] for x in range(0, len(self.char_list), 10)]
-        for i in range(len(self.char_list)):
-            self.char_pages_ao1[i // 10][i % 10] = '{}#{}&&0&&&0&'.format(i, self.char_list[i])
-
-    def build_music_pages_ao1(self):
-        self.music_pages_ao1 = []
-        index = 0
-        # add areas first
-        for area in self.area_manager.areas:
-            self.music_pages_ao1.append('{}#{}'.format(index, area.name))
-            index += 1
-        # then add music
-        for item in self.music_list:
-            self.music_pages_ao1.append('{}#{}'.format(index, item['category']))
-            index += 1
-            for song in item['songs']:
-                self.music_pages_ao1.append('{}#{}'.format(index, song['name']))
-                index += 1
-        self.music_pages_ao1 = [self.music_pages_ao1[x:x + 10] for x in range(0, len(self.music_pages_ao1), 10)]
 
     def is_valid_char_id(self, char_id):
         return len(self.char_list) > char_id >= 0
