@@ -27,8 +27,10 @@ I hope to implement those and more in time. These are:
 * Improved banlist (SQLite)
 * Server voting (SQLite)
 * REST API
-* Command overhaul
+* Command overhaul [x]
 * Improved targeting for OOC commands
+
+Items marked with [x] are currently in progress.
 
 
 ## How to use
@@ -40,40 +42,11 @@ I hope to implement those and more in time. These are:
 
 ### User Commands
 
-* help
-* g
-* toggleglobal
-* need
-* toggleadverts
-* area
-* getarea
-* getareas
-* doc
-* cleardoc
-* status
-* pm
-* charselect
-* reload
-* switch
-* randomchar
-* pos
-* bg
-* roll
-* coinflip
-* currentmusic
+* 
 
 ### Mod Commands
 
-* login
-* gm
-* lm
-* play
-* judgelog
-* announce
-* kick
-* ipban
-* mute
-* unmute
+* 
 
 ## License
 
