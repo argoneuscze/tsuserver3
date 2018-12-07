@@ -21,8 +21,8 @@ from server.util.exceptions import ClientError, AreaError
 
 class ClientManager:
     class Client:
-        def __init__(self, server, transport, user_id):
-            self.transport = transport
+        def __init__(self, server, network, user_id):
+            self.network = network
             self.hdid = ''
             self.id = user_id
             self.char_id = -1
@@ -36,7 +36,7 @@ class ClientManager:
             self.is_muted = False
 
         def send_raw_message(self, msg):
-            self.transport.write(msg.encode('utf-8'))
+            self.network.send_raw_message(msg)
 
         def send_command(self, command, *args):
             if args:
@@ -51,7 +51,7 @@ class ClientManager:
             self.send_host_message('=== MOTD ===\r\n{}\r\n============='.format(self.server.config['motd']))
 
         def disconnect(self):
-            self.transport.close()
+            self.network.disconnect()
 
         def change_character(self, char_id, force=False):
             if not self.server.is_valid_char_id(char_id):
@@ -158,7 +158,7 @@ class ClientManager:
                 raise ClientError('Invalid password.')
 
         def get_ip(self):
-            return self.transport.get_extra_info('peername')[0]
+            return self.network.get_ip()
 
         def get_char_name(self):
             if self.char_id == -1:
@@ -175,8 +175,8 @@ class ClientManager:
         self.cur_id = 0
         self.server = server
 
-    def new_client(self, transport):
-        c = self.Client(self.server, transport, self.cur_id)
+    def new_client(self, network):
+        c = self.Client(self.server, network, self.cur_id)
         self.clients.add(c)
         self.cur_id += 1
         return c

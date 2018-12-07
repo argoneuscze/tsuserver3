@@ -18,6 +18,7 @@
 import asyncio
 from enum import Enum
 
+from server.network.network_interface import NetworkInterface
 from server.ooc_commands import commands
 from server.util import logger
 from server.util.exceptions import ClientError, AreaError, ArgumentError, ServerError
@@ -75,7 +76,7 @@ class AOProtocol(asyncio.Protocol):
 
         :param transport: the transport object
         """
-        self.client = self.server.new_client(transport)
+        self.client = self.server.new_client(NetworkInterface(transport))
         self.ping_timeout = asyncio.get_event_loop().call_later(self.server.config['timeout'], self.client.disconnect)
         self.client.send_command('decryptor', 34)  # just fantacrypt things
 
