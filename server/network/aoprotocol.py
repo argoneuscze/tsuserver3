@@ -18,10 +18,10 @@
 import asyncio
 from enum import Enum
 
-from server import commands
-from server import logger
-from server.exceptions import ClientError, AreaError, ArgumentError, ServerError
-from server.fantacrypt import fanta_decrypt
+from server.ooc_commands import commands
+from server.util import logger
+from server.util.exceptions import ClientError, AreaError, ArgumentError, ServerError
+from server.util.fantacrypt import fanta_decrypt
 
 
 class AOProtocol(asyncio.Protocol):

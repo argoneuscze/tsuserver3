@@ -15,9 +15,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from server import fantacrypt
-from server import logger
-from server.exceptions import ClientError, AreaError
+from server.util import logger, fantacrypt
+from server.util.exceptions import ClientError, AreaError
 
 
 class ClientManager:

@@ -19,14 +19,14 @@ import asyncio
 
 import yaml
 
-from server import logger
-from server.aoprotocol import AOProtocol
-from server.area_manager import AreaManager
-from server.ban_manager import BanManager
-from server.client_manager import ClientManager
-from server.districtclient import DistrictClient
-from server.exceptions import ServerError
-from server.masterserverclient import MasterServerClient
+from server.util import logger
+from server.network.aoprotocol import AOProtocol
+from server.areas.area_manager import AreaManager
+from server.clients.ban_manager import BanManager
+from server.clients.client_manager import ClientManager
+from server.network.districtclient import DistrictClient
+from server.util.exceptions import ServerError
+from server.network.masterserverclient import MasterServerClient
 
 
 class TsuServer3:

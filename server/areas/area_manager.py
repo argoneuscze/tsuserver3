@@ -21,7 +21,7 @@ import random
 import time
 import yaml
 
-from server.exceptions import AreaError
+from server.util.exceptions import AreaError
 
 
 class AreaManager:

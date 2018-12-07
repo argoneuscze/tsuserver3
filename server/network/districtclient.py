@@ -17,7 +17,7 @@
 
 import asyncio
 
-from server import logger
+from server.util import logger
 
 
 class DistrictClient:

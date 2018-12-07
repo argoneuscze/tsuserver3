@@ -17,7 +17,7 @@
 
 import json
 
-from server.exceptions import ServerError
+from server.util.exceptions import ServerError
 
 
 class BanManager:

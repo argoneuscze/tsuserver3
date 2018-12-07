@@ -17,8 +17,8 @@
 
 import random
 
-from server import logger
-from server.exceptions import ClientError, ServerError, ArgumentError, AreaError
+from server.util import logger
+from server.util.exceptions import ClientError, ServerError, ArgumentError, AreaError
 
 
 def ooc_cmd_switch(client, arg):
