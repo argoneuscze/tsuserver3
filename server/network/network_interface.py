@@ -31,6 +31,7 @@ class NetworkInterface:
         self.transport.close()
 
     def send_raw_message(self, message):
+        print('SND: {}'.format(message))  # TODO debug
         self.transport.write(message.encode('utf-8'))
 
     def get_ip(self):

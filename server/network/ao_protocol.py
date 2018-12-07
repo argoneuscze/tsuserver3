@@ -55,6 +55,8 @@ class AOProtocol(asyncio.Protocol):
         if len(self.buffer) > 8192:
             self.client.disconnect()
         for msg in self.get_messages():
+            print('RCV: {}'.format(msg))  # TODO debug
+
             if len(msg) < 2:
                 self.client.disconnect()
                 return
@@ -138,7 +140,8 @@ class AOProtocol(asyncio.Protocol):
         if self.server.ban_manager.is_banned(self.client.get_ip()):
             self.client.disconnect()
             return
-        self.client.send_command('ID', self.client.id, self.server.version)
+        version_string = '.'.join(map(str, self.server.software_version))
+        self.client.send_command('ID', self.client.id, self.server.software, version_string)
         self.client.send_command('PN', self.server.get_player_count() - 1, self.server.config['playerlimit'])
 
     def net_cmd_ch(self, _):

@@ -34,7 +34,8 @@ class TsuServer3:
         self.client_manager = ClientManager(self)
         self.area_manager = AreaManager(self)
         self.ban_manager = BanManager()
-        self.version = 'tsuserver3dev'
+        self.software = 'tsuserver3_origin'
+        self.software_version = (1, 0, 0)
         self.char_list = None
         self.char_pages_ao1 = None
         self.music_list = None
