@@ -2,7 +2,7 @@
 
 A Python based server for Attorney Online.
 
-Currently targeting client versions `AO2 2.4.10` and `webAO`.
+Currently targeting client versions `AO2 v2.4.10` and `webAO v2.3`.
 
 Requires Python 3.6+.
 
@@ -29,7 +29,7 @@ I hope to implement those and more in time. These are:
 * Server voting (SQLite)
 * REST API
 * Command overhaul [x]
-* Improved targeting for OOC commands
+* Improved targeting for OOC commands [x]
 
 Items marked with [x] are currently in progress.
 

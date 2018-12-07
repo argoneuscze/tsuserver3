@@ -69,10 +69,12 @@ class TsuServer3:
         if self.config['use_district']:
             self.district_client = DistrictClient(self)
             asyncio.ensure_future(self.district_client.connect(), loop=loop)
+            print(logger.log_debug('District support enabled.'))
 
         if self.config['use_masterserver']:
             self.ms_client = MasterServerClient(self)
             asyncio.ensure_future(self.ms_client.connect(), loop=loop)
+            print(logger.log_debug('Master server support enabled.'))
 
         print(logger.log_debug('Server started.'))
 
