@@ -20,7 +20,7 @@ There's a bunch of features currently missing from this version, as it's almost 
 I hope to implement those and more in time. These are:
 
 * ~~AO2 Loading~~
-* AO2 Feature Support
+* ~~AO2 Feature Support~~
 * Evidence support
 * ~~WebSockets~~
 * Modcall reason
