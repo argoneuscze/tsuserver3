@@ -21,7 +21,7 @@ I hope to implement those and more in time. These are:
 
 * AO2 Loading
 * AO2 Feature Support
-* Websockets
+* ~~Websockets~~
 * Modcall reason
 * Built-in support for Areas
 * Improved banlist (SQLite)

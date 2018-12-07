@@ -17,12 +17,14 @@
 
 import asyncio
 
+import websockets
 import yaml
 
 from server.areas.area_manager import AreaManager
 from server.clients.client_manager import ClientManager
 from server.data.ban_manager import BanManager
 from server.network.ao_protocol import AOProtocol
+from server.network.ao_protocol_ws import new_websocket_client
 from server.network.district_client import DistrictClient
 from server.network.master_server_client import MasterServerClient
 from server.util import logger
@@ -59,6 +61,11 @@ class TsuServer3:
 
         ao_server_crt = loop.create_server(lambda: AOProtocol(self), bound_ip, self.config['port'])
         ao_server = loop.run_until_complete(ao_server_crt)
+
+        if self.config['use_websockets']:
+            ao_server_ws = websockets.serve(new_websocket_client(self), bound_ip, self.config['websocket_port'])
+            asyncio.ensure_future(ao_server_ws)
+            print(logger.log_debug('WebSocket support enabled.'))
 
         if self.config['use_district']:
             self.district_client = DistrictClient(self)
