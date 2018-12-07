@@ -2,7 +2,7 @@
 
 A Python based server for Attorney Online.
 
-Currently targeting client version `AO2 2.4.10`.
+Currently targeting client version `AO2 2.4.10` and `WebAO`.
 
 Requires Python 3.6+.
 
