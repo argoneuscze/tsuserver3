@@ -1,8 +1,15 @@
-# tsuserver3
+# tsuserver3 Origin
 
 A Python based server for Attorney Online.
 
-Requires Python 3.5+.
+Requires Python 3.6+.
+
+## Motivation
+Over the years, the original [tsuserver3](https://github.com/AttorneyOnlineVidya/tsuserver3) has been changed by various people and the codebase
+has been inflated to the point where making any sort of change created a bigger mess than before.
+
+Therefore *tsuserver3 Origin* aims to keep the old codebase simple and extend the code reasonably
+while keeping it simple to add new features.
 
 
 ## How to use
