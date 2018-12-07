@@ -20,13 +20,13 @@ import asyncio
 import yaml
 
 from server.util import logger
-from server.network.aoprotocol import AOProtocol
+from server.network.ao_protocol import AOProtocol
 from server.areas.area_manager import AreaManager
 from server.clients.ban_manager import BanManager
 from server.clients.client_manager import ClientManager
-from server.network.districtclient import DistrictClient
+from server.network.district_client import DistrictClient
 from server.util.exceptions import ServerError
-from server.network.masterserverclient import MasterServerClient
+from server.network.master_server_client import MasterServerClient
 
 
 class TsuServer3:
@@ -67,7 +67,7 @@ class TsuServer3:
             self.ms_client = MasterServerClient(self)
             asyncio.ensure_future(self.ms_client.connect(), loop=loop)
 
-        logger.log_debug('Server started.')
+        print(logger.log_debug('Server started.'))
 
         try:
             loop.run_forever()

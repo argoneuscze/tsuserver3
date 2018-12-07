@@ -45,7 +45,8 @@ class MasterServerClient:
                 await asyncio.sleep(30)
 
     async def handle_connection(self):
-        logger.log_debug('Master server connected.')
+        print(logger.log_debug('Master server connected.'))
+
         await self.send_server_info()
         while True:
             data = await self.reader.readuntil(b'#%')

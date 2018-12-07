@@ -48,11 +48,13 @@ def setup_logger(debug):
 def log_debug(msg, client=None):
     msg = parse_client_info(client) + msg
     logging.getLogger('debug').debug(msg)
+    return msg
 
 
 def log_server(msg, client=None):
     msg = parse_client_info(client) + msg
     logging.getLogger('server').info(msg)
+    return msg
 
 
 def parse_client_info(client):
