@@ -19,8 +19,9 @@ while keeping it simple to add new features.
 There's a bunch of features currently missing from this version, as it's almost two years old.
 I hope to implement those and more in time. These are:
 
-* AO2 Loading
+* AO2 Loading [x]
 * AO2 Feature Support
+* Evidence support
 * ~~WebSockets~~
 * Modcall reason
 * Built-in support for Areas
