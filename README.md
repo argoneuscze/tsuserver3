@@ -58,5 +58,5 @@ while keeping it simple to add new features.
 
 ## License
 
-This server is licensed under the GPLv3 license. See the
+This server is licensed under the AGPLv3 license. See the
 [LICENSE](LICENSE.md) file for more information.
