@@ -5,11 +5,27 @@ A Python based server for Attorney Online.
 Requires Python 3.6+.
 
 ## Motivation
+
 Over the years, the original [tsuserver3](https://github.com/AttorneyOnlineVidya/tsuserver3) has been changed by various people and the codebase
 has been inflated to the point where making any sort of change created a bigger mess than before.
 
 Therefore *tsuserver3 Origin* aims to keep the old codebase simple and extend the code reasonably
 while keeping it simple to add new features.
+
+## TODO
+
+There's a bunch of features currently missing from this version, as it's almost two years old.
+I hope to implement those and more in time. These are:
+
+* AO2 Loading
+* AO2 Feature Support
+* Websockets
+* Modcall reason
+* Improved banlist (SQLite)
+* Server voting (SQLite)
+* REST API
+* Command overhaul
+* Improved targeting for OOC commands
 
 
 ## How to use
