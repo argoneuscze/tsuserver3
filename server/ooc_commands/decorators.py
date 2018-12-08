@@ -73,6 +73,58 @@ def require_arg(error='This command requires an argument.'):
     return require_arg_func
 
 
+def argument(name, type, optional=False, multiword=False):
+    def argument_func(f):
+        # detach the attribute from the function until next call
+        def cleanup():
+            del f.arg_remaining
+
+        # process a single argument and return it
+        def process_argument():
+            string = f.arg_remaining
+
+            if not string:
+                if optional:
+                    return
+                else:
+                    raise ArgumentError('Not enough arguments.')
+
+            if multiword:
+                f.arg_remaining = ''
+            else:
+                spl = string.split(maxsplit=1)
+                string = spl[0]
+                if len(spl) == 2:
+                    f.arg_remaining = spl[1]
+
+            # TODO parse arg 'string' and return value
+            return string
+
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            client, arg = args
+            # attach function attribute if doesn't exist
+            if not hasattr(f, 'arg_remaining'):
+                f.arg_remaining = arg
+                args = [client]
+            try:
+                result = process_argument()
+            except ArgumentError:
+                cleanup()
+                raise
+            # attach the result to the proper keyword argument
+            kwargs[name] = result
+
+            ret_val = f(*args, **kwargs)
+            cleanup()
+
+            return ret_val
+
+        return wrapper
+
+    return argument_func
+
+
 def target(*flags):
     """ A decorator to specify that the argument targets a certain client.
      TODO figure out how the targeting will work

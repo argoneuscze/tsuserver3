@@ -15,23 +15,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from server.ooc_commands.argument_types import Type
-from server.ooc_commands.decorators import argument
-from server.util.exceptions import ClientError
+from enum import Enum, auto
 
 
-@argument('target_area', type=Type.Integer, optional=False)
-def ooc_cmd_area(client, target_area):
-    ...
-
-
-def ooc_cmd_pos(client, arg):
-    if len(arg) == 0:
-        client.change_position()
-        client.send_host_message('Position reset.')
-    else:
-        try:
-            client.change_position(arg)
-        except ClientError:
-            raise
-        client.send_host_message('Position changed.')
+class Type(Enum):
+    Integer = auto()
+    String = auto()
+    TargetAny = auto()
+    TargetStatic = auto()
+    TargetDynamic = auto()
