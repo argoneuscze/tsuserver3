@@ -24,10 +24,11 @@ I hope to implement those and more in time. These are:
 * Evidence support
 * ~~WebSockets~~
 * Modcall reason
-* Built-in support for Areas
+* Built-in support for Areas (pending client support)
 * Improved banlist (SQLite)
 * Server voting (SQLite)
 * REST API
+* Pairing
 * Command overhaul [x]
 * Improved targeting for OOC commands [x]
 
