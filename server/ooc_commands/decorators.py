@@ -34,7 +34,7 @@ def mod_only(f):
     def wrapper(*args, **kwargs):
         client = args[0]
         if not client.is_mod:
-            raise ClientError('You must be logged in as a moderator to do that.')
+            raise ClientError("You must be logged in as a moderator to do that.")
         return f(*args, **kwargs)
 
     return wrapper
@@ -47,13 +47,13 @@ def no_args(f):
     def wrapper(*args, **kwargs):
         arg = args[1]
         if len(arg) != 0:
-            raise ArgumentError('This command takes no arguments.')
+            raise ArgumentError("This command takes no arguments.")
         return f(*args, **kwargs)
 
     return wrapper
 
 
-def require_arg(error='This command requires an argument.'):
+def require_arg(error="This command requires an argument."):
     """ Command requires an argument, you may provide a custom error message via the `error` kwarg.
      Note as this is a decorator factory, you need to call it as a function to get default arguments:
      @require_arg()
@@ -74,8 +74,14 @@ def require_arg(error='This command requires an argument.'):
 
 
 def argument(name, type, optional=False, multiword=False):
+    """ Automatic pre-parsing of OOC command arguments into function parameters.
+
+    This decorator uses the decorated function's attributes to keep the current state of the parser.
+    TODO explain how it works and how to use it.
+    """
+
     def argument_func(f):
-        # detach the attribute from the function until next call
+        # remove the attribute from the function until next call
         def cleanup():
             del f.arg_remaining
 
@@ -87,10 +93,10 @@ def argument(name, type, optional=False, multiword=False):
                 if optional:
                     return
                 else:
-                    raise ArgumentError('Not enough arguments.')
+                    raise ArgumentError("Not enough arguments.")
 
             if multiword:
-                f.arg_remaining = ''
+                f.arg_remaining = ""
             else:
                 spl = string.split(maxsplit=1)
                 string = spl[0]
@@ -103,15 +109,19 @@ def argument(name, type, optional=False, multiword=False):
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
             client, arg = args
+
             # attach function attribute if doesn't exist
-            if not hasattr(f, 'arg_remaining'):
+            if not hasattr(f, "arg_remaining"):
                 f.arg_remaining = arg
                 args = [client]
+
+            # parse argument
             try:
                 result = process_argument()
             except ArgumentError:
                 cleanup()
                 raise
+
             # attach the result to the proper keyword argument
             kwargs[name] = result
 

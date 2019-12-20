@@ -31,8 +31,11 @@ class DistrictClient:
         loop = asyncio.get_event_loop()
         while True:
             try:
-                self.reader, self.writer = await asyncio.open_connection(self.server.config['district_ip'],
-                                                                         self.server.config['district_port'], loop=loop)
+                self.reader, self.writer = await asyncio.open_connection(
+                    self.server.config["district_ip"],
+                    self.server.config["district_port"],
+                    loop=loop,
+                )
                 await self.handle_connection()
             except (ConnectionRefusedError, TimeoutError):
                 pass
@@ -40,29 +43,40 @@ class DistrictClient:
                 self.writer = None
                 self.reader = None
             finally:
-                logger.log_debug("Couldn't connect to the district, retrying in 30 seconds.")
+                logger.log_debug(
+                    "Couldn't connect to the district, retrying in 30 seconds."
+                )
                 await asyncio.sleep(30)
 
     async def handle_connection(self):
-        logger.log_debug('District connected.')
-        self.send_raw_message('AUTH#{}'.format(self.server.config['district_password']))
+        logger.log_debug("District connected.")
+        self.send_raw_message("AUTH#{}".format(self.server.config["district_password"]))
         while True:
-            data = await self.reader.readuntil(b'\r\n')
+            data = await self.reader.readuntil(b"\r\n")
             if not data:
                 return
             raw_msg = data.decode()[:-2]
-            logger.log_debug('[DISTRICT][INC][RAW]{}'.format(raw_msg))
-            cmd, *args = raw_msg.split('#')
-            if cmd == 'GLOBAL':
-                glob_name = '{}[{}:{}][{}]'.format('<dollar>G', args[1], args[2], args[3])
-                if args[0] == '1':
-                    glob_name += '[M]'
-                self.server.send_all_cmd_pred('CT', glob_name, args[4], pred=lambda x: not x.muted_global)
-            elif cmd == 'NEED':
-                need_msg = '=== Cross Advert ===\r\n{} at {} in {} [{}] needs {}\r\n====================' \
-                    .format(args[1], args[0], args[2], args[3], args[4])
-                self.server.send_all_cmd_pred('CT', '{}'.format(self.server.config['hostname']), need_msg,
-                                              pred=lambda x: not x.muted_adverts)
+            logger.log_debug("[DISTRICT][INC][RAW]{}".format(raw_msg))
+            cmd, *args = raw_msg.split("#")
+            if cmd == "GLOBAL":
+                glob_name = "{}[{}:{}][{}]".format(
+                    "<dollar>G", args[1], args[2], args[3]
+                )
+                if args[0] == "1":
+                    glob_name += "[M]"
+                self.server.send_all_cmd_pred(
+                    "CT", glob_name, args[4], pred=lambda x: not x.muted_global
+                )
+            elif cmd == "NEED":
+                need_msg = "=== Cross Advert ===\r\n{} at {} in {} [{}] needs {}\r\n====================".format(
+                    args[1], args[0], args[2], args[3], args[4]
+                )
+                self.server.send_all_cmd_pred(
+                    "CT",
+                    "{}".format(self.server.config["hostname"]),
+                    need_msg,
+                    pred=lambda x: not x.muted_adverts,
+                )
 
     async def write_queue(self):
         while self.message_queue:
@@ -76,5 +90,5 @@ class DistrictClient:
     def send_raw_message(self, msg):
         if not self.writer:
             return
-        self.message_queue.append('{}\r\n'.format(msg).encode())
+        self.message_queue.append("{}\r\n".format(msg).encode())
         asyncio.ensure_future(self.write_queue(), loop=asyncio.get_event_loop())

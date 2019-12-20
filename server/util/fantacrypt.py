@@ -25,11 +25,11 @@ CRYPT_KEY = 5
 
 
 def fanta_decrypt(data):
-    data_bytes = [int(data[x:x + 2], 16) for x in range(0, len(data), 2)]
+    data_bytes = [int(data[x : x + 2], 16) for x in range(0, len(data), 2)]
     key = CRYPT_KEY
-    ret = ''
+    ret = ""
     for byte in data_bytes:
-        val = byte ^ ((key & 0xffff) >> 8)
+        val = byte ^ ((key & 0xFFFF) >> 8)
         ret += chr(val)
         key = ((byte + key) * CRYPT_CONST_1) + CRYPT_CONST_2
     return ret
@@ -37,9 +37,9 @@ def fanta_decrypt(data):
 
 def fanta_encrypt(data):
     key = CRYPT_KEY
-    ret = ''
+    ret = ""
     for char in data:
-        val = ord(char) ^ ((key & 0xffff) >> 8)
-        ret += binascii.hexlify(val.to_bytes(1, byteorder='big')).decode().upper()
+        val = ord(char) ^ ((key & 0xFFFF) >> 8)
+        ret += binascii.hexlify(val.to_bytes(1, byteorder="big")).decode().upper()
         key = ((val + key) * CRYPT_CONST_1) + CRYPT_CONST_2
     return ret

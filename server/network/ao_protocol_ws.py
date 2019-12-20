@@ -33,14 +33,12 @@ class AOProtocolWS(AOProtocol):
 
         def get_extra_info(self, key):
             """ Returns the remote address. """
-            info = {
-                'peername': self.ws.remote_address
-            }
+            info = {"peername": self.ws.remote_address}
             return info[key]
 
         def write(self, message):
             """ Writes message to the socket. """
-            message = message.decode('utf-8')
+            message = message.decode("utf-8")
             asyncio.ensure_future(self.ws_try_writing_message(message))
 
         def close(self):
@@ -66,7 +64,7 @@ class AOProtocolWS(AOProtocol):
     async def ws_handle(self):
         try:
             data = await self.ws.recv()
-            self.data_received(data.encode('utf-8'))
+            self.data_received(data.encode("utf-8"))
         except ConnectionClosed as exc:
             self.ws_connected = False
             self.connection_lost(exc)

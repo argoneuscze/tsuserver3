@@ -27,20 +27,20 @@ class BanManager:
 
     def load_banlist(self):
         try:
-            with open('data/banlist.json', 'r') as banlist_file:
+            with open("data/banlist.json", "r") as banlist_file:
                 self.bans = json.load(banlist_file)
         except FileNotFoundError:
             return
 
     def write_banlist(self):
-        with open('data/banlist.json', 'w') as banlist_file:
+        with open("data/banlist.json", "w") as banlist_file:
             json.dump(self.bans, banlist_file)
 
     def add_ban(self, ip):
         if ip not in self.bans:
             self.bans.append(ip)
         else:
-            raise ServerError('This IP is already banned.')
+            raise ServerError("This IP is already banned.")
         self.write_banlist()
 
     def is_banned(self, ip):

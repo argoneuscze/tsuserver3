@@ -29,24 +29,31 @@ class AreaManager:
         self.load_areas()
 
     def load_areas(self):
-        with open('config/areas.yaml', 'r') as chars:
+        with open("config/areas.yaml", "r") as chars:
             areas = yaml.load(chars)
         for item in areas:
             self.areas.append(
-                Area(self.cur_id, self.server, item['area'], item['background'], item['bglock']))
+                Area(
+                    self.cur_id,
+                    self.server,
+                    item["area"],
+                    item["background"],
+                    item["bglock"],
+                )
+            )
             self.cur_id += 1
 
-    def default_area(self):
+    def get_default_area(self):
         return self.areas[0]
 
     def get_area_by_name(self, name):
         for area in self.areas:
             if area.name == name:
                 return area
-        raise AreaError('Area not found.')
+        raise AreaError("Area not found.")
 
     def get_area_by_id(self, num):
         for area in self.areas:
             if area.id == num:
                 return area
-        raise AreaError('Area not found.')
+        raise AreaError("Area not found.")

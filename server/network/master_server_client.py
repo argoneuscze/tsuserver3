@@ -31,9 +31,11 @@ class MasterServerClient:
         loop = asyncio.get_event_loop()
         while True:
             try:
-                self.reader, self.writer = await asyncio.open_connection(self.server.config['masterserver_ip'],
-                                                                         self.server.config['masterserver_port'],
-                                                                         loop=loop)
+                self.reader, self.writer = await asyncio.open_connection(
+                    self.server.config["masterserver_ip"],
+                    self.server.config["masterserver_port"],
+                    loop=loop,
+                )
                 await self.handle_connection()
             except (ConnectionRefusedError, TimeoutError):
                 pass
@@ -41,33 +43,39 @@ class MasterServerClient:
                 self.writer = None
                 self.reader = None
             finally:
-                logger.log_debug("Couldn't connect to the master server, retrying in 30 seconds.")
+                logger.log_debug(
+                    "Couldn't connect to the master server, retrying in 30 seconds."
+                )
                 await asyncio.sleep(30)
 
     async def handle_connection(self):
-        print(logger.log_debug('Master server connected.'))
+        print(logger.log_debug("Master server connected."))
 
         await self.send_server_info()
         while True:
-            data = await self.reader.readuntil(b'#%')
+            data = await self.reader.readuntil(b"#%")
             if not data:
                 return
             raw_msg = data.decode()[:-2]
-            cmd, *args = raw_msg.split('#')
-            if cmd != 'CHECK' and cmd != 'PONG':
-                logger.log_debug('[MASTERSERVER][INC][RAW]{}'.format(raw_msg))
-            if cmd == 'CHECK':
-                await self.send_raw_message('PING#%')
-            elif cmd == 'NOSERV':
+            cmd, *args = raw_msg.split("#")
+            if cmd != "CHECK" and cmd != "PONG":
+                logger.log_debug("[MASTERSERVER][INC][RAW]{}".format(raw_msg))
+            if cmd == "CHECK":
+                await self.send_raw_message("PING#%")
+            elif cmd == "NOSERV":
                 await self.send_server_info()
 
     async def send_server_info(self):
         cfg = self.server.config
-        port = str(cfg['port'])
-        if cfg['use_websockets']:
-            port += '&{}'.format(cfg['websocket_port'])
-        msg = 'SCC#{}#{}#{}#{}#%'.format(port, cfg['masterserver_name'], cfg['masterserver_description'],
-                                         self.server.software)
+        port = str(cfg["port"])
+        if cfg["use_websockets"]:
+            port += "&{}".format(cfg["websocket_port"])
+        msg = "SCC#{}#{}#{}#{}#%".format(
+            port,
+            cfg["masterserver_name"],
+            cfg["masterserver_description"],
+            self.server.software,
+        )
         await self.send_raw_message(msg)
 
     async def send_raw_message(self, msg):

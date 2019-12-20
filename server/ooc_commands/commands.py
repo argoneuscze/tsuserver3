@@ -20,7 +20,7 @@ from server.ooc_commands.decorators import argument
 from server.util.exceptions import ClientError
 
 
-@argument('target_area', type=Type.Integer, optional=False)
+@argument("target_area", type=Type.Integer, optional=False)
 def ooc_cmd_area(client, target_area):
     ...
 
@@ -28,10 +28,10 @@ def ooc_cmd_area(client, target_area):
 def ooc_cmd_pos(client, arg):
     if len(arg) == 0:
         client.change_position()
-        client.send_host_message('Position reset.')
+        client.send_host_message("Position reset.")
     else:
         try:
             client.change_position(arg)
         except ClientError:
             raise
-        client.send_host_message('Position changed.')
+        client.send_host_message("Position changed.")

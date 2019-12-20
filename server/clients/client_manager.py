@@ -24,8 +24,8 @@ class ClientManager:
         self.cur_id = 0
         self.server = server
 
-    def new_client(self, network):
-        c = Client(self.server, network, self.cur_id)
+    def new_client(self, network, area):
+        c = Client(self.server, network, self.cur_id, area)
         self.clients.add(c)
         self.cur_id += 1
         return c
