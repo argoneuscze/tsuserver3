@@ -1,6 +1,6 @@
 hostname: <dollar>H
 playerlimit: 100
-port: 50000
+port: 27016
 local: false
 
 guardpass: guard
@@ -8,7 +8,7 @@ modpass: mod
 
 motd: Welcome to my server!
 
-use_websockets: true
+use_websockets: false
 websocket_port: 50001
 
 use_district: false

@@ -30,7 +30,7 @@ class AreaManager:
 
     def load_areas(self):
         with open("config/areas.yaml", "r") as chars:
-            areas = yaml.load(chars)
+            areas = yaml.load(chars, Loader=yaml.FullLoader)
         for item in areas:
             self.areas.append(
                 Area(

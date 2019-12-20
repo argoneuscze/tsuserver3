@@ -110,15 +110,15 @@ class TsuServer3:
 
     def load_config(self):
         with open("config/config.yaml", "r") as cfg:
-            self.config = yaml.load(cfg)
+            self.config = yaml.load(cfg, Loader=yaml.FullLoader)
 
     def load_characters(self):
         with open("config/characters.yaml", "r") as chars:
-            self.char_list = yaml.load(chars)
+            self.char_list = yaml.load(chars, Loader=yaml.BaseLoader)
 
     def load_music(self):
         with open("config/music.yaml", "r") as music:
-            self.music_list = yaml.load(music)
+            self.music_list = yaml.load(music, Loader=yaml.FullLoader)
         # populate song list including areas
         network_music_list = [area.name for area in self.area_manager.areas]
         for item in self.music_list:
@@ -128,7 +128,7 @@ class TsuServer3:
 
     def load_backgrounds(self):
         with open("config/backgrounds.yaml", "r") as bgs:
-            self.backgrounds = yaml.load(bgs)
+            self.backgrounds = yaml.load(bgs, Loader=yaml.BaseLoader)
 
     def is_valid_char_id(self, char_id):
         return len(self.char_list) > char_id >= 0
