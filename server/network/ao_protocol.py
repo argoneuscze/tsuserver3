@@ -200,7 +200,7 @@ class AOProtocol(asyncio.Protocol):
         self.client.send_command("SI", char_cnt, evi_cnt, music_cnt)
 
     def net_cmd_rc(self, _):
-        """ Asks for the character list. TODO
+        """ Asks for the character list.
 
         RC#%
 
@@ -208,7 +208,7 @@ class AOProtocol(asyncio.Protocol):
         self.client.send_command("SC", *self.server.char_list)
 
     def net_cmd_rm(self, _):
-        """ Asks for the music list. TODO
+        """ Asks for the music list.
 
         RM#%
 
@@ -216,7 +216,7 @@ class AOProtocol(asyncio.Protocol):
         self.client.send_command("SM", *self.server.music_list_network)
 
     def net_cmd_rd(self, _):
-        """ Client is ready. TODO
+        """ Client is ready.
 
         RD#%
 
