@@ -253,22 +253,26 @@ class AOProtocol(asyncio.Protocol):
         if not self.client.area.can_send_message():
             return
         if not self.validate_net_cmd(
-            args,
-            self.ArgType.STR,
-            self.ArgType.STR_OR_EMPTY,
-            self.ArgType.STR,
-            self.ArgType.STR,
-            self.ArgType.STR,
-            self.ArgType.STR,
-            self.ArgType.STR,
-            self.ArgType.INT,
-            self.ArgType.INT,
-            self.ArgType.INT,
-            self.ArgType.INT,
-            self.ArgType.INT,
-            self.ArgType.INT,
-            self.ArgType.INT,
-            self.ArgType.INT,
+                args,
+                self.ArgType.STR,  # msg_type
+                self.ArgType.STR_OR_EMPTY,  # pre
+                self.ArgType.STR,  # folder
+                self.ArgType.STR,  # anim
+                self.ArgType.STR,  # text
+                self.ArgType.STR,  # pos
+                self.ArgType.STR,  # sfx
+                self.ArgType.INT,  # anim_type
+                self.ArgType.INT,  # char_id
+                self.ArgType.INT,  # sfx_delay
+                self.ArgType.STR,  # button
+                self.ArgType.INT,  # evidence
+                self.ArgType.INT,  # flip
+                self.ArgType.INT,  # ding
+                self.ArgType.INT,  # color
+                self.ArgType.STR_OR_EMPTY,  # showname
+                self.ArgType.INT,  # charid_pair
+                self.ArgType.INT,  # offset_pair
+                self.ArgType.INT,  # nonint_pre
         ):
             return
         (
@@ -287,7 +291,12 @@ class AOProtocol(asyncio.Protocol):
             flip,
             ding,
             color,
+            showname,
+            charid_pair,
+            offset_pair,
+            nonint_pre,
         ) = args
+
         if msg_type != "chat":
             return
         if anim_type not in (0, 1, 2, 5, 6):
@@ -296,22 +305,31 @@ class AOProtocol(asyncio.Protocol):
             return
         if sfx_delay < 0:
             return
-        if button not in (0, 1, 2, 3, 4):
-            return
         if evidence < 0:
             return
         if flip not in (0, 1):
             return
         if ding not in (0, 1):
             return
-        if color not in (0, 1, 2, 3, 4, 5):
+        if color not in (0, 1, 2, 3, 4, 5, 6, 7, 8):
             return
-        if color == 2 and not self.client.is_mod:
+        if color == 2 and not self.client.get_attr("client.is_moderator"):
             color = 0
+
+        if cur_pos := self.client.get_attr("ic.position"):
+            pos = cur_pos
         if pos not in ("def", "pro", "hld", "hlp", "jud", "wit"):
             return
+
+        button = int(button)
+        if button not in (0, 1, 2, 3, 4):
+            return
+
+        showname = showname[:15]
+
         msg = text[:256]
         evidence = 0  # TODO implement evidence
+
         self.client.area.send_command(
             "MS",
             msg_type,
@@ -329,6 +347,10 @@ class AOProtocol(asyncio.Protocol):
             flip,
             ding,
             color,
+            showname,
+            charid_pair,
+            offset_pair,
+            nonint_pre,
         )
         self.client.area.set_next_msg_delay(len(msg))
         logger.log_server(

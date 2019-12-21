@@ -172,10 +172,10 @@ class Client:
         self.send_done()
 
     def auth_mod(self, password):
-        if self.is_mod:
+        if self.get_attr("client.is_moderator"):
             raise ClientError("Already logged in.")
         if password == self.server.config["modpass"]:
-            self.is_mod = True
+            self.set_attr("client.is_moderator", True)
         else:
             raise ClientError("Invalid password.")
 
