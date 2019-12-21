@@ -22,7 +22,6 @@ from server.network.network_interface import NetworkInterface
 from server.ooc_commands import commands
 from server.util import logger
 from server.util.exceptions import ClientError, AreaError, ArgumentError, ServerError
-from server.util.fantacrypt import fanta_decrypt
 
 
 class AOProtocol(asyncio.Protocol):
@@ -58,13 +57,6 @@ class AOProtocol(asyncio.Protocol):
             if len(msg) < 2:
                 self.client.disconnect()
                 return
-            # general netcode structure is not great
-            if msg[0] in ("#", "3", "4"):
-                if msg[0] == "#":
-                    msg = msg[1:]
-                spl = msg.split("#", 1)
-                msg = "#".join([fanta_decrypt(spl[0])] + spl[1:])
-                logger.log_debug("[INC][RAW]{}".format(msg), self.client)
             try:
                 print("RCV: {}".format(msg))  # TODO debug
 
@@ -82,7 +74,9 @@ class AOProtocol(asyncio.Protocol):
         self.ping_timeout = asyncio.get_event_loop().call_later(
             self.server.config["timeout"], self.client.disconnect
         )
-        self.client.send_command("decryptor", 34)  # just fantacrypt things
+
+        # hopefully this will be deleted one day
+        self.client.send_command("decryptor", "NOENCRYPT")
 
     def connection_lost(self, exc):
         """ User disconnected
@@ -186,6 +180,10 @@ class AOProtocol(asyncio.Protocol):
                 "noencryption",
                 "deskmod",
                 "evidence",
+                "cccc_ic_support",
+                "arup",
+                "casing_alerts",
+                "modcall_reason",
             )
 
     def net_cmd_askchaa(self, _):
@@ -247,7 +245,9 @@ class AOProtocol(asyncio.Protocol):
         Refer to the implementation for details.
 
         """
-        if self.client.is_muted:  # Checks to see if the client has been muted by a mod
+        if self.client.get_attr(
+            "ic.muted"
+        ):  # Checks to see if the client has been muted by a mod
             self.client.send_host_message("You have been muted by a moderator")
             return
         if not self.client.area.can_send_message():
@@ -308,11 +308,8 @@ class AOProtocol(asyncio.Protocol):
             return
         if color == 2 and not self.client.is_mod:
             color = 0
-        if self.client.pos:
-            pos = self.client.pos
-        else:
-            if pos not in ("def", "pro", "hld", "hlp", "jud", "wit"):
-                return
+        if pos not in ("def", "pro", "hld", "hlp", "jud", "wit"):
+            return
         msg = text[:256]
         evidence = 0  # TODO implement evidence
         self.client.area.send_command(
@@ -349,11 +346,13 @@ class AOProtocol(asyncio.Protocol):
         """
         if not self.validate_net_cmd(args, self.ArgType.STR, self.ArgType.STR):
             return
-        if self.client.name == "":
-            self.client.name = args[0]
-        if self.client.name.startswith(
-            self.server.config["hostname"]
-        ) or self.client.name.startswith("<dollar>G"):
+        ooc_name = self.client.get_attr("ooc.name")
+        if ooc_name is None:
+            ooc_name = args[0]
+            self.client.set_attr("ooc.name", ooc_name)
+        if ooc_name.startswith(self.server.config["hostname"]) or ooc_name.startswith(
+            "<dollar>G"
+        ):
             self.client.send_host_message("That name is reserved!")
             return
         if args[1].startswith("/"):
@@ -369,13 +368,10 @@ class AOProtocol(asyncio.Protocol):
             except (ClientError, AreaError, ArgumentError, ServerError) as ex:
                 self.client.send_host_message(ex)
         else:
-            self.client.area.send_command("CT", self.client.name, args[1])
+            self.client.area.send_command("CT", ooc_name, args[1])
             logger.log_server(
                 "[OOC][{}][{}][{}]{}".format(
-                    self.client.area.id,
-                    self.client.get_char_name(),
-                    self.client.name,
-                    args[1],
+                    self.client.area.id, self.client.get_char_name(), ooc_name, args[1],
                 ),
                 self.client,
             )

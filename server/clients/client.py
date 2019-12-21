@@ -14,8 +14,12 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-from server.util import logger, fantacrypt
+from server.clients.client_attributes import (
+    default_attributes,
+    set_dict_attribute,
+    get_dict_attribute,
+)
+from server.util import logger
 from server.util.exceptions import ClientError, AreaError
 
 
@@ -27,23 +31,18 @@ class Client:
         self.char_id = -1
         self.area = area
         self.server = server
-        self.name = ""
-        self.is_mod = False
-        self.pos = ""
-        self.muted_global = False
-        self.muted_adverts = False
-        self.is_muted = False
+        self._attributes = default_attributes()
 
-    def send_raw_message(self, msg):
+    def _send_raw_message(self, msg):
         self.network.send_raw_message(msg)
 
     def send_command(self, command, *args):
         if args:
-            self.send_raw_message(
+            self._send_raw_message(
                 "{}#{}#%".format(command, "#".join([str(x) for x in args]))
             )
         else:
-            self.send_raw_message("{}#%".format(command))
+            self._send_raw_message("{}#%".format(command))
 
     def send_host_message(self, msg):
         self.send_command("CT", self.server.config["hostname"], msg)
@@ -52,6 +51,12 @@ class Client:
         self.send_host_message(
             "=== MOTD ===\r\n{}\r\n=============".format(self.server.config["motd"])
         )
+
+    def set_attr(self, attr_path, value):
+        set_dict_attribute(self._attributes, attr_path, value)
+
+    def get_attr(self, attr_path):
+        return get_dict_attribute(self._attributes, attr_path)
 
     def disconnect(self):
         self.network.disconnect()
@@ -160,9 +165,6 @@ class Client:
         self.send_command("HP", 2, self.area.hp_pro)
         self.send_command("BN", self.area.background)
         self.send_command("MM", 1)
-        self.send_command(
-            "OPPASS", fantacrypt.fanta_encrypt(self.server.config["guardpass"])
-        )
         self.send_command("DONE")
 
     def char_select(self):
@@ -190,4 +192,6 @@ class Client:
             raise ClientError(
                 "Invalid position. Possible values: def, pro, hld, hlp, jud, wit."
             )
-        self.pos = pos
+        print(self.get_attribute("ic.position"))
+        self.set_attribute("ic.position", pos)
+        print(self.get_attribute("ic.position"))

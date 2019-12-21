@@ -24,6 +24,7 @@ to be user will be the outermost failing decorator.
 
 import functools
 
+from server.ooc_commands.argument_types import Flag
 from server.util.exceptions import ClientError, ArgumentError
 
 
@@ -33,7 +34,7 @@ def mod_only(f):
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
         client = args[0]
-        if not client.is_mod:
+        if not client.get_attr("client.is_moderator"):
             raise ClientError("You must be logged in as a moderator to do that.")
         return f(*args, **kwargs)
 
@@ -73,62 +74,91 @@ def require_arg(error="This command requires an argument."):
     return require_arg_func
 
 
-def argument(name, type, optional=False, multiword=False):
-    """ Automatic pre-parsing of OOC command arguments into function parameters.
+def arguments(**arg_kwargs):
+    def parse_argument(string, arg_type, multiword):
+        rest = ""
+        if multiword:
+            arg = string
+        else:
+            spl = string.split(maxsplit=1)
+            arg = spl[0]
+            if len(spl) == 2:
+                rest = spl[1]
 
-    This decorator uses the decorated function's attributes to keep the current state of the parser.
-    TODO explain how it works and how to use it.
+        # TODO parse arg according to arg_type
+        return arg, rest
+
+    def arguments_func(f):
+        @functools.wraps(f)
+        def wrapper(client, cmd_arg):
+            parsed_args = dict()
+
+            rest_cmd_arg = cmd_arg
+            for name, value in arg_kwargs.items():
+                optional = False
+                multiword = False
+                if isinstance(value, (list, tuple)):
+                    arg_type, flags = value
+                    optional = Flag.Optional in flags
+                    multiword = Flag.Multiword in flags
+                else:
+                    arg_type = value
+
+                if not rest_cmd_arg:
+                    if not optional:
+                        raise ArgumentError("Not enough arguments.")
+                    else:
+                        parsed_args[name] = ""
+                        continue
+
+                try:
+                    arg_val, rest_cmd_arg = parse_argument(
+                        rest_cmd_arg, arg_type, multiword
+                    )
+                    parsed_args[name] = arg_val
+                except ArgumentError:
+                    raise
+
+            if rest_cmd_arg:
+                raise ArgumentError("Too many arguments.")
+
+            return f(client, **parsed_args)
+
+        return wrapper
+
+    return arguments_func
+
+
+def argument(name, arg_type, optional=False, multiword=False):
+    """ This decorator uses the decorated function's attributes to keep the current state of the parser.
     """
 
+    # process a single argument and return it
+    def process_argument(string):
+        # TODO parse arg 'string' and return value
+        return string
+
+    # TODO
     def argument_func(f):
-        # remove the attribute from the function until next call
-        def cleanup():
-            del f.arg_remaining
-
-        # process a single argument and return it
-        def process_argument():
-            string = f.arg_remaining
-
-            if not string:
-                if optional:
-                    return
-                else:
-                    raise ArgumentError("Not enough arguments.")
-
-            if multiword:
-                f.arg_remaining = ""
-            else:
-                spl = string.split(maxsplit=1)
-                string = spl[0]
-                if len(spl) == 2:
-                    f.arg_remaining = spl[1]
-
-            # TODO parse arg 'string' and return value
-            return string
-
         @functools.wraps(f)
-        def wrapper(*args, **kwargs):
-            client, arg = args
+        def wrapper(client, **kwargs):
+            cur_arg = kwargs.get("_argument", "")
+            rest_arg = ""
 
-            # attach function attribute if doesn't exist
-            if not hasattr(f, "arg_remaining"):
-                f.arg_remaining = arg
-                args = [client]
+            if not cur_arg:
+                if not optional:
+                    raise ArgumentError("Not enough arguments.")
 
             # parse argument
             try:
-                result = process_argument()
+                result = process_argument(cur_arg)
             except ArgumentError:
-                cleanup()
                 raise
 
             # attach the result to the proper keyword argument
             kwargs[name] = result
 
-            ret_val = f(*args, **kwargs)
-            cleanup()
-
-            return ret_val
+            return f(client, **kwargs)
 
         return wrapper
 

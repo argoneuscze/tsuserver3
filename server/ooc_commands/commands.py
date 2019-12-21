@@ -15,23 +15,24 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from server.ooc_commands.argument_types import Type
-from server.ooc_commands.decorators import argument
+from server.ooc_commands.argument_types import Type, Flag
+from server.ooc_commands.decorators import arguments
 from server.util.exceptions import ClientError
 
 
-@argument("target_area", type=Type.Integer, optional=False)
-def ooc_cmd_area(client, target_area):
-    ...
+# @argument("target_area", arg_type=Type.Integer, optional=False)
+# def ooc_cmd_area(client, target_area):
+#     ...
 
 
-def ooc_cmd_pos(client, arg):
-    if len(arg) == 0:
+@arguments(position=(Type.String, [Flag.Optional]))
+def ooc_cmd_pos(client, position):
+    if not position:
         client.change_position()
         client.send_host_message("Position reset.")
     else:
         try:
-            client.change_position(arg)
+            client.change_position(position)
         except ClientError:
             raise
         client.send_host_message("Position changed.")
