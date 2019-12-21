@@ -253,26 +253,26 @@ class AOProtocol(asyncio.Protocol):
         if not self.client.area.can_send_message():
             return
         if not self.validate_net_cmd(
-                args,
-                self.ArgType.STR,  # msg_type
-                self.ArgType.STR_OR_EMPTY,  # pre
-                self.ArgType.STR,  # folder
-                self.ArgType.STR,  # anim
-                self.ArgType.STR,  # text
-                self.ArgType.STR,  # pos
-                self.ArgType.STR,  # sfx
-                self.ArgType.INT,  # anim_type
-                self.ArgType.INT,  # char_id
-                self.ArgType.INT,  # sfx_delay
-                self.ArgType.STR,  # button
-                self.ArgType.INT,  # evidence
-                self.ArgType.INT,  # flip
-                self.ArgType.INT,  # ding
-                self.ArgType.INT,  # color
-                self.ArgType.STR_OR_EMPTY,  # showname
-                self.ArgType.INT,  # charid_pair
-                self.ArgType.INT,  # offset_pair
-                self.ArgType.INT,  # nonint_pre
+            args,
+            self.ArgType.STR,  # msg_type
+            self.ArgType.STR_OR_EMPTY,  # pre
+            self.ArgType.STR,  # folder
+            self.ArgType.STR,  # anim
+            self.ArgType.STR,  # text
+            self.ArgType.STR,  # pos
+            self.ArgType.STR,  # sfx
+            self.ArgType.INT,  # anim_type
+            self.ArgType.INT,  # char_id
+            self.ArgType.INT,  # sfx_delay
+            self.ArgType.STR,  # button
+            self.ArgType.INT,  # evidence
+            self.ArgType.INT,  # flip
+            self.ArgType.INT,  # ding
+            self.ArgType.INT,  # color
+            self.ArgType.STR_OR_EMPTY,  # showname
+            self.ArgType.INT,  # charid_pair
+            self.ArgType.INT,  # offset_pair
+            self.ArgType.INT,  # nonint_pre
         ):
             return
         (
