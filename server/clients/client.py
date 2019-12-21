@@ -192,6 +192,4 @@ class Client:
             raise ClientError(
                 "Invalid position. Possible values: def, pro, hld, hlp, jud, wit."
             )
-        print(self.get_attribute("ic.position"))
-        self.set_attribute("ic.position", pos)
-        print(self.get_attribute("ic.position"))
+        self.set_attr("ic.position", pos)

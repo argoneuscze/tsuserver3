@@ -1,7 +1,7 @@
 def default_attributes():
     return {
         "client": {"is_moderator": False},
-        "ic": {"muted": False},
+        "ic": {"position": "", "muted": False},
         "ooc": {"name": None},
         "global": {"muted": False},
         "adverts": {"muted": False},
