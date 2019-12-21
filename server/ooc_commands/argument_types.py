@@ -24,3 +24,9 @@ class Type(Enum):
     TargetAny = auto()
     TargetStatic = auto()
     TargetDynamic = auto()
+    CustomFunction = auto()
+
+
+class Flag(Enum):
+    Optional = auto()
+    Multiword = auto()
