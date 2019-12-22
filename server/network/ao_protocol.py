@@ -498,23 +498,30 @@ class AOProtocol(asyncio.Protocol):
         """
         ...
 
-    def net_cmd_zz(self, _):
+    def net_cmd_zz(self, args):
         """ Sent on mod call.
 
         """
+        if not self.validate_net_cmd(args, self.ArgType.STR):
+            return
+
+        msg = args[0][:80]
+
         self.server.send_all_cmd_pred(
             "ZZ",
-            "{} ({}) in {} ({})".format(
+            msg,
+            "{} ({}) in {} ({}): {}".format(
                 self.client.get_char_name(),
                 self.client.get_ip(),
                 self.client.area.name,
                 self.client.area.id,
+                msg,
             ),
-            pred=lambda c: c.is_mod,
+            pred=lambda c: c.get_attr("client.is_moderator"),
         )
         logger.log_server(
-            "[{}]{} called a moderator.".format(
-                self.client.area.id, self.client.get_char_name()
+            "[{}]{} called a moderator with reason: {}.".format(
+                self.client.area.id, self.client.get_char_name(), msg
             )
         )
 
