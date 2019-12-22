@@ -34,6 +34,8 @@ class Client:
         self._attributes = default_attributes()
 
     def _send_raw_message(self, msg):
+        if self.server.config["debug"]:
+            print(logger.log_debug(f"[SND]{msg}", self))
         self.network.send_raw_message(msg)
 
     def send_command(self, command, *args):
@@ -165,6 +167,13 @@ class Client:
         self.send_command("HP", 2, self.area.hp_pro)
         self.send_command("BN", self.area.background)
         self.send_command("MM", 1)
+
+        # TODO debug
+        self.send_command("ARUP", 0, 1, 0, 0)
+        self.send_command("ARUP", 1, "IDLE", "IDLE", "IDLE")
+        self.send_command("ARUP", 2, "IDLE", "IDLE", "IDLE")
+        self.send_command("ARUP", 3, "IDLE", "IDLE", "IDLE")
+
         self.send_command("DONE")
 
     def char_select(self):

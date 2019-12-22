@@ -58,7 +58,8 @@ class AOProtocol(asyncio.Protocol):
                 self.client.disconnect()
                 return
             try:
-                print("RCV: {}".format(msg))  # TODO debug
+                if self.server.config["debug"]:
+                    print(logger.log_debug(f"[RCV]{msg}", self.client))
 
                 cmd, *args = msg.split("#")
                 self.net_cmd_dispatcher[cmd](self, args)
@@ -330,6 +331,15 @@ class AOProtocol(asyncio.Protocol):
         msg = text[:256]
         evidence = 0  # TODO implement evidence
 
+        # TODO pair things
+        charid_pair = -1
+        offset_pair = 0
+
+        other_offset = 0
+        other_emote = ""
+        other_flip = 0
+        other_folder = ""
+
         self.client.area.send_command(
             "MS",
             msg_type,
@@ -349,7 +359,11 @@ class AOProtocol(asyncio.Protocol):
             color,
             showname,
             charid_pair,
+            other_folder,
+            other_emote,
             offset_pair,
+            other_offset,
+            other_flip,
             nonint_pre,
         )
         self.client.area.set_next_msg_delay(len(msg))
