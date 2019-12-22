@@ -298,7 +298,7 @@ class AOProtocol(asyncio.Protocol):
             nonint_pre,
         ) = args
 
-        if msg_type != "chat":
+        if msg_type not in ("chat", "0", "1"):
             return
         if anim_type not in (0, 1, 2, 5, 6):
             return
@@ -510,6 +510,7 @@ class AOProtocol(asyncio.Protocol):
 
         msg = args[0][:80]
 
+        self.client.send_host_message("Moderator called.")
         self.server.send_all_cmd_pred(
             "ZZ",
             msg,
