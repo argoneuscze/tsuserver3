@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from server.ooc_commands.argument_types import Type, Flag
-from server.ooc_commands.decorators import arguments
+from server.ooc_commands.decorators import arguments, casing_area_only
 from server.util import logger
 from server.util.exceptions import ClientError, AreaError
 
@@ -46,11 +46,8 @@ def ooc_cmd_bg(client, background):
 
 
 @arguments(status=(Type.String, [Flag.Optional]))
+@casing_area_only
 def ooc_cmd_status(client, status):
-    if not client.area.get_attr("is_casing"):
-        client.send_host_message("This area is not intended for casing.")
-        return
-
     if not status:
         client.send_host_message(f"Current status: {client.area.get_attr('status')}")
     else:
@@ -65,6 +62,42 @@ def ooc_cmd_status(client, status):
             )
         except AreaError:
             raise
+
+
+@arguments(name=(Type.String, [Flag.Optional]))
+@casing_area_only
+def ooc_cmd_cm(client, name):
+    if not name:
+        client.send_host_message(
+            f"Current area's CM: {client.area.get_attr('case.master')}"
+        )
+        return
+
+    try:
+        client.area.change_cm(name)
+        client.area.send_host_message(
+            f"CM changed to {client.area.get_attr('case.master')}"
+        )
+        logger.log_server(
+            f"[{client.area.id}][{client.get_char_name()}]Changed CM to {client.area.get_attr('case.master')}",
+            client,
+        )
+    except AreaError:
+        raise
+
+
+@arguments()
+@casing_area_only
+def ooc_cmd_clearcm(client):
+    try:
+        client.area.change_cm("None")
+        client.area.send_host_message(f"CM reset.")
+        logger.log_server(
+            f"[{client.area.id}][{client.get_char_name()}]Changed CM to {client.area.get_attr('case.master')}",
+            client,
+        )
+    except AreaError:
+        raise
 
 
 @arguments(position=(Type.String, [Flag.Optional]))

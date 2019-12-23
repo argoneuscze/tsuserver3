@@ -25,7 +25,7 @@ to be user will be the outermost failing decorator.
 import functools
 
 from server.ooc_commands.argument_types import Flag
-from server.util.exceptions import ClientError, ArgumentError
+from server.util.exceptions import ClientError, ArgumentError, AreaError
 
 
 def mod_only(f):
@@ -41,37 +41,17 @@ def mod_only(f):
     return wrapper
 
 
-def no_args(f):
-    """ Command doesn't take any arguments. """
+def casing_area_only(f):
+    """ Command can only be used in a casing area. """
 
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
-        arg = args[1]
-        if len(arg) != 0:
-            raise ArgumentError("This command takes no arguments.")
+        client = args[0]
+        if not client.area.get_attr("is_casing"):
+            raise AreaError("This area is not intended for casing.")
         return f(*args, **kwargs)
 
     return wrapper
-
-
-def require_arg(error="This command requires an argument."):
-    """ Command requires an argument, you may provide a custom error message via the `error` kwarg.
-     Note as this is a decorator factory, you need to call it as a function to get default arguments:
-     @require_arg()
-     @require_arg(error='Custom error')
-    """
-
-    def require_arg_func(f):
-        @functools.wraps(f)
-        def wrapper(*args, **kwargs):
-            arg = args[1]
-            if len(arg) == 0:
-                raise ArgumentError(error)
-            return f(*args, **kwargs)
-
-        return wrapper
-
-    return require_arg_func
 
 
 def arguments(**arg_kwargs):
@@ -127,56 +107,3 @@ def arguments(**arg_kwargs):
         return wrapper
 
     return arguments_func
-
-
-def argument(name, arg_type, optional=False, multiword=False):
-    """ This decorator uses the decorated function's attributes to keep the current state of the parser.
-    """
-
-    # process a single argument and return it
-    def process_argument(string):
-        # TODO parse arg 'string' and return value
-        return string
-
-    # TODO
-    def argument_func(f):
-        @functools.wraps(f)
-        def wrapper(client, **kwargs):
-            cur_arg = kwargs.get("_argument", "")
-            rest_arg = ""
-
-            if not cur_arg:
-                if not optional:
-                    raise ArgumentError("Not enough arguments.")
-
-            # parse argument
-            try:
-                result = process_argument(cur_arg)
-            except ArgumentError:
-                raise
-
-            # attach the result to the proper keyword argument
-            kwargs[name] = result
-
-            return f(client, **kwargs)
-
-        return wrapper
-
-    return argument_func
-
-
-def target(*flags):
-    """ A decorator to specify that the argument targets a certain client.
-     TODO figure out how the targeting will work
-    """
-
-    def target_func(f):
-        @functools.wraps(f)
-        def wrapper(*args, **kwargs):
-            client, arg = args
-            # TODO find target
-            return f(*args, **kwargs)
-
-        return wrapper
-
-    return target_func

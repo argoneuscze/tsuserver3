@@ -30,6 +30,7 @@ def default_attributes(name, background, bg_lock, is_casing):
         "is_casing": is_casing,
         "background": {"name": background, "locked": bg_lock},
         "health": {"defense": 10, "prosecution": 10},
+        "case": {"master": "None"},
     }
 
 
@@ -128,3 +129,7 @@ class Area:
         if value == self.get_attr("status"):
             raise AreaError("This status is already set.")
         self.set_attr("status", value.upper())
+
+    def change_cm(self, name):
+        name = name[:20]
+        self.set_attr("case.master", name)
