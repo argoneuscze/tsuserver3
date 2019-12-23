@@ -32,7 +32,8 @@ class AOProtocol(asyncio.Protocol):
     class ArgType(Enum):
         STR = (1,)
         STR_OR_EMPTY = (2,)
-        INT = 3
+        INT = (3,)
+        BOOL = 4
 
     def __init__(self, server):
         super().__init__()
@@ -117,9 +118,13 @@ class AOProtocol(asyncio.Protocol):
         for i, arg in enumerate(args):
             if len(arg) == 0 and types[i] != self.ArgType.STR_OR_EMPTY:
                 return False
-            if types[i] == self.ArgType.INT:
+            if types[i] == self.ArgType.INT or types[i] == self.ArgType.BOOL:
                 try:
                     args[i] = int(arg)
+                    print(types[i])
+                    if types[i] == self.ArgType.BOOL:
+                        if args[i] not in (0, 1):
+                            return False
                 except ValueError:
                     return False
         return True
@@ -268,13 +273,18 @@ class AOProtocol(asyncio.Protocol):
             self.ArgType.INT,  # sfx_delay
             self.ArgType.STR,  # button
             self.ArgType.INT,  # evidence
-            self.ArgType.INT,  # flip
-            self.ArgType.INT,  # ding
+            self.ArgType.BOOL,  # flip
+            self.ArgType.BOOL,  # ding
             self.ArgType.INT,  # color
             self.ArgType.STR_OR_EMPTY,  # showname
             self.ArgType.INT,  # charid_pair
             self.ArgType.INT,  # offset_pair
-            self.ArgType.INT,  # nonint_pre
+            self.ArgType.BOOL,  # nonint_pre
+            self.ArgType.BOOL,  # looping SFX
+            self.ArgType.BOOL,  # screenshake
+            self.ArgType.STR,  # screenshake frame
+            self.ArgType.STR,  # realization frame
+            self.ArgType.STR,  # sfx frame
         ):
             return
         (
@@ -297,6 +307,11 @@ class AOProtocol(asyncio.Protocol):
             charid_pair,
             offset_pair,
             nonint_pre,
+            loop_sfx,
+            screenshake,
+            frame_screenshake,
+            frame_realization,
+            frame_sfx,
         ) = args
 
         if msg_type not in ("chat", "0", "1"):
@@ -366,6 +381,11 @@ class AOProtocol(asyncio.Protocol):
             other_offset,
             other_flip,
             nonint_pre,
+            loop_sfx,
+            screenshake,
+            frame_screenshake,
+            frame_realization,
+            frame_sfx,
         )
         self.client.area.set_next_msg_delay(len(msg))
         logger.log_server(
