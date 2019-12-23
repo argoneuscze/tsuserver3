@@ -23,24 +23,25 @@ from server.util.attributes import set_dict_attribute, get_dict_attribute
 from server.util.exceptions import AreaError
 
 
-def default_attributes(name, background, bg_lock):
+def default_attributes(name, background, bg_lock, is_casing):
     return {
         "name": name,
         "status": "IDLE",
+        "is_casing": is_casing,
         "background": {"name": background, "locked": bg_lock},
         "health": {"defense": 10, "prosecution": 10},
     }
 
 
 class Area:
-    def __init__(self, area_id, server, name, background, bg_lock):
+    def __init__(self, area_id, server, name, background, bg_lock, is_casing):
         self.clients = set()
         self.id = area_id
         self.name = name
         self.server = server
         self.music_looper = None
         self.next_message_time = 0
-        self._attributes = default_attributes(name, background, bg_lock)
+        self._attributes = default_attributes(name, background, bg_lock, is_casing)
 
     def new_client(self, client):
         self.clients.add(client)

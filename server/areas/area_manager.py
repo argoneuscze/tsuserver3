@@ -32,6 +32,9 @@ class AreaManager:
         with open("config/areas.yaml", "r") as chars:
             areas = yaml.load(chars, Loader=yaml.FullLoader)
         for item in areas:
+            is_casing = True
+            if val := item["casing"]:
+                is_casing = val
             self.areas.append(
                 Area(
                     self.cur_id,
@@ -39,6 +42,7 @@ class AreaManager:
                     item["area"],
                     item["background"],
                     item["bglock"],
+                    is_casing,
                 )
             )
             self.cur_id += 1
