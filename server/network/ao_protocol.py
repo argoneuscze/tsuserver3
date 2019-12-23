@@ -491,7 +491,6 @@ class AOProtocol(asyncio.Protocol):
             return
         try:
             self.client.area.change_hp(args[0], args[1])
-            self.client.area.add_to_judgelog(self.client, "changed the penalties")
             logger.log_server(
                 "[{}]{} changed HP ({}) to {}".format(
                     self.client.area.id, self.client.get_char_name(), args[0], args[1]
