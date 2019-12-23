@@ -65,7 +65,7 @@ class Area:
         self.send_command("CT", self.server.config["hostname"], msg)
 
     def set_next_msg_delay(self, msg_length):
-        delay = min(3000, 100 + 30 * msg_length)
+        delay = min(3000, 100 + 50 * msg_length)
         self.next_message_time = round(time.time() * 1000.0 + delay)
 
     def play_music(self, name, cid, length=-1):
