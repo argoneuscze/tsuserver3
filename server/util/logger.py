@@ -61,6 +61,6 @@ def parse_client_info(client):
     if client is None:
         return ""
     info = client.get_ip()
-    if client.get_attr("client.is_moderator"):
+    if client.get_attr("is_moderator"):
         return "[{:<15}][{}][MOD]".format(info, client.id)
     return "[{:<15}][{}]".format(info, client.id)

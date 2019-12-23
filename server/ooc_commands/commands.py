@@ -17,12 +17,34 @@
 
 from server.ooc_commands.argument_types import Type, Flag
 from server.ooc_commands.decorators import arguments
-from server.util.exceptions import ClientError
+from server.util import logger
+from server.util.exceptions import ClientError, AreaError
 
 
-# @argument("target_area", arg_type=Type.Integer, optional=False)
-# def ooc_cmd_area(client, target_area):
-#     ...
+@arguments(background=(Type.String, [Flag.Optional]))
+def ooc_cmd_bg(client, background):
+    if not background:
+        client.send_host_message(
+            f"The current background is {client.area.get_attr('background.name')}"
+        )
+        return
+    if not client.get_attr("is_moderator") and client.area.get_attr(
+        "background.locked"
+    ):
+        raise AreaError("This area's background is locked.")
+    try:
+        client.area.change_background(background)
+    except AreaError:
+        raise
+    client.area.send_host_message(
+        "{} changed the background to {}.".format(client.get_char_name(), background)
+    )
+    logger.log_server(
+        "[{}][{}]Changed background to {}".format(
+            client.area.id, client.get_char_name(), background
+        ),
+        client,
+    )
 
 
 @arguments(position=(Type.String, [Flag.Optional]))

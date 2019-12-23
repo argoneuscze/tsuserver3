@@ -34,7 +34,7 @@ def mod_only(f):
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
         client = args[0]
-        if not client.get_attr("client.is_moderator"):
+        if not client.get_attr("is_moderator"):
             raise ClientError("You must be logged in as a moderator to do that.")
         return f(*args, **kwargs)
 

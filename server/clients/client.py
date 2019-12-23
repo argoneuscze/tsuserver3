@@ -14,13 +14,19 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from server.clients.client_attributes import (
-    default_attributes,
-    set_dict_attribute,
-    get_dict_attribute,
-)
 from server.util import logger
+from server.util.attributes import set_dict_attribute, get_dict_attribute
 from server.util.exceptions import ClientError, AreaError
+
+
+def default_attributes():
+    return {
+        "is_moderator": False,
+        "ic": {"position": "", "muted": False},
+        "ooc": {"name": None},
+        "global": {"muted": False},
+        "adverts": {"muted": False},
+    }
 
 
 class Client:
@@ -115,9 +121,9 @@ class Client:
             ),
             self,
         )
-        self.send_command("HP", 1, self.area.hp_def)
-        self.send_command("HP", 2, self.area.hp_pro)
-        self.send_command("BN", self.area.background)
+        self.send_command("HP", 1, self.area.get_attr("health.defense"))
+        self.send_command("HP", 2, self.area.get_attr("health.prosecution"))
+        self.send_command("BN", self.area.get_attr("background.name"))
 
     def send_area_list(self):
         msg = "=== Areas ==="
@@ -125,7 +131,7 @@ class Client:
             msg += "\r\nArea {}: {} (users: {})".format(i, area.name, len(area.clients))
             if self.area == area:
                 msg += " [*]"
-            msg += "\r\n[{}]".format(area.status)
+            msg += "\r\n[{}]".format(area.get_attr("status"))
         self.send_host_message(msg)
 
     def get_area_info(self, area_id):
@@ -163,9 +169,9 @@ class Client:
         for x in avail_char_ids:
             char_list[x] = 0
         self.send_command("CharsCheck", *char_list)
-        self.send_command("HP", 1, self.area.hp_def)
-        self.send_command("HP", 2, self.area.hp_pro)
-        self.send_command("BN", self.area.background)
+        self.send_command("HP", 1, self.area.get_attr("health.defense"))
+        self.send_command("HP", 2, self.area.get_attr("health.prosecution"))
+        self.send_command("BN", self.area.get_attr("background.name"))
         self.send_command("MM", 1)
 
         # TODO debug
@@ -181,10 +187,10 @@ class Client:
         self.send_done()
 
     def auth_mod(self, password):
-        if self.get_attr("client.is_moderator"):
+        if self.get_attr("is_moderator"):
             raise ClientError("Already logged in.")
         if password == self.server.config["modpass"]:
-            self.set_attr("client.is_moderator", True)
+            self.set_attr("is_moderator", True)
         else:
             raise ClientError("Invalid password.")
 

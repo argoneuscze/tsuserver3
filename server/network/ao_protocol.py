@@ -314,7 +314,7 @@ class AOProtocol(asyncio.Protocol):
             return
         if color not in (0, 1, 2, 3, 4, 5, 6, 7, 8):
             return
-        if color == 2 and not self.client.get_attr("client.is_moderator"):
+        if color == 2 and not self.client.get_attr("is_moderator"):
             color = 0
 
         if cur_pos := self.client.get_attr("ic.position"):
@@ -432,7 +432,6 @@ class AOProtocol(asyncio.Protocol):
             try:
                 name, length = self.server.get_song_data(args[0])
                 self.client.area.play_music(name, self.client.char_id, length)
-                self.client.area.add_music_playing(self.client, name)
                 logger.log_server(
                     "[{}][{}]Changed music to {}.".format(
                         self.client.area.id, self.client.get_char_name(), name
@@ -521,7 +520,7 @@ class AOProtocol(asyncio.Protocol):
                 self.client.area.id,
                 msg,
             ),
-            pred=lambda c: c.get_attr("client.is_moderator"),
+            pred=lambda c: c.get_attr("is_moderator"),
         )
         logger.log_server(
             "[{}]{} called a moderator with reason: {}.".format(

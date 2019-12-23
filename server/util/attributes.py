@@ -16,16 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-def default_attributes():
-    return {
-        "client": {"is_moderator": False},
-        "ic": {"position": "", "muted": False},
-        "ooc": {"name": None},
-        "global": {"muted": False},
-        "adverts": {"muted": False},
-    }
-
-
 def get_dict_attribute(dictionary, attr_path):
     path_split = attr_path.split(".")
     for path in path_split:

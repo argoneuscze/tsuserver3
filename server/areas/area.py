@@ -19,7 +19,17 @@ import asyncio
 import random
 import time
 
+from server.util.attributes import set_dict_attribute, get_dict_attribute
 from server.util.exceptions import AreaError
+
+
+def default_attributes(name, background, bg_lock):
+    return {
+        "name": name,
+        "status": "IDLE",
+        "background": {"name": background, "locked": bg_lock},
+        "health": {"defense": 10, "prosecution": 10},
+    }
 
 
 class Area:
@@ -27,24 +37,22 @@ class Area:
         self.clients = set()
         self.id = area_id
         self.name = name
-        self.background = background
-        self.bg_lock = bg_lock
         self.server = server
         self.music_looper = None
         self.next_message_time = 0
-        self.hp_def = 10
-        self.hp_pro = 10
-        self.doc = "No document."
-        self.status = "IDLE"
-        self.judgelog = []
-        self.current_music = ""
-        self.current_music_player = ""
+        self._attributes = default_attributes(name, background, bg_lock)
 
     def new_client(self, client):
         self.clients.add(client)
 
     def remove_client(self, client):
         self.clients.remove(client)
+
+    def set_attr(self, attr_path, value):
+        set_dict_attribute(self._attributes, attr_path, value)
+
+    def get_attr(self, attr_path):
+        return get_dict_attribute(self._attributes, attr_path)
 
     def is_char_available(self, char_id):
         return char_id not in [x.char_id for x in self.clients]
@@ -92,16 +100,16 @@ class Area:
         if not 1 <= side <= 2:
             raise AreaError("Invalid penalty side.")
         if side == 1:
-            self.hp_def = val
+            self.set_attr("health.defense", val)
         elif side == 2:
-            self.hp_pro = val
+            self.set_attr("health.prosecution", val)
         self.send_command("HP", side, val)
 
     def change_background(self, bg):
         if bg not in self.server.backgrounds:
             raise AreaError("Invalid background name.")
-        self.background = bg
-        self.send_command("BN", self.background)
+        self.set_attr("background.name", bg)
+        self.send_command("BN", bg)
 
     def change_status(self, value):
         allowed_values = (
@@ -116,18 +124,4 @@ class Area:
             raise AreaError(
                 "Invalid status. Possible values: {}".format(", ".join(allowed_values))
             )
-        self.status = value.upper()
-
-    def change_doc(self, doc="No document."):
-        self.doc = doc
-
-    def add_to_judgelog(self, client, msg):
-        if len(self.judgelog) >= 10:
-            self.judgelog = self.judgelog[1:]
-        self.judgelog.append(
-            "{} ({}) {}.".format(client.get_char_name(), client.get_ip(), msg)
-        )
-
-    def add_music_playing(self, client, name):
-        self.current_music_player = client.get_char_name()
-        self.current_music = name
+        self.set_attr("area.status", value.upper())
