@@ -1,6 +1,7 @@
 - area: Basement
   background: gs4
   bglock: true
+  casing: false
 - area: Courtroom 1
   background: gs5
   bglock: false
