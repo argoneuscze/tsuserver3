@@ -121,7 +121,6 @@ class AOProtocol(asyncio.Protocol):
             if types[i] == self.ArgType.INT or types[i] == self.ArgType.BOOL:
                 try:
                     args[i] = int(arg)
-                    print(types[i])
                     if types[i] == self.ArgType.BOOL:
                         if args[i] not in (0, 1):
                             return False
