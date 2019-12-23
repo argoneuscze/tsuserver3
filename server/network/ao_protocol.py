@@ -474,9 +474,8 @@ class AOProtocol(asyncio.Protocol):
         if args[0] not in ("testimony1", "testimony2", "notguilty", "guilty"):
             return
         self.client.area.send_command("RT", args[0])
-        self.client.area.add_to_judgelog(self.client, "used WT/CE")
         logger.log_server(
-            "[{}]{} Used WT/CE".format(
+            "[{}]{} used a judge action".format(
                 self.client.area.id, self.client.get_char_name()
             ),
             self.client,
