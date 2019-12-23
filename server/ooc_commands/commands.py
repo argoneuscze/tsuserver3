@@ -40,7 +40,7 @@ def ooc_cmd_bg(client, background):
         f"{client.get_char_name()} changed the background to {background}"
     )
     logger.log_server(
-        f"[{client.area_id}][{client.get_char_name()}]Changed background to {background}",
+        f"[{client.area.id}][{client.get_char_name()}]Changed background to {background}",
         client,
     )
 
