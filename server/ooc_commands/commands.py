@@ -47,6 +47,35 @@ def ooc_cmd_bg(client, background):
     )
 
 
+@arguments(status=(Type.String, [Flag.Optional]))
+def ooc_cmd_status(client, status):
+    if not client.area.get_attr("is_casing"):
+        client.send_host_message("This area is not intended for casing.")
+        return
+
+    if not status:
+        client.send_host_message(
+            "Current status: {}".format(client.area.get_attr("status"))
+        )
+    else:
+        try:
+            client.area.change_status(status)
+            client.area.send_host_message(
+                "{} changed status to {}.".format(
+                    client.get_char_name(), client.area.get_attr("status")
+                )
+            )
+            logger.log_server(
+                "[{}][{}]Changed status to {}".format(
+                    client.area.id,
+                    client.get_char_name(),
+                    client.area.get_attr("status"),
+                )
+            )
+        except AreaError:
+            raise
+
+
 @arguments(position=(Type.String, [Flag.Optional]))
 def ooc_cmd_pos(client, position):
     if not position:

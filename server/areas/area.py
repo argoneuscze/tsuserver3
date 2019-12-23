@@ -26,7 +26,7 @@ from server.util.exceptions import AreaError
 def default_attributes(name, background, bg_lock, is_casing):
     return {
         "name": name,
-        "status": "IDLE",
+        "status": "IDLE" if is_casing else "NOCASE",
         "is_casing": is_casing,
         "background": {"name": background, "locked": bg_lock},
         "health": {"defense": 10, "prosecution": 10},
@@ -125,4 +125,6 @@ class Area:
             raise AreaError(
                 "Invalid status. Possible values: {}".format(", ".join(allowed_values))
             )
-        self.set_attr("area.status", value.upper())
+        if value == self.get_attr("status"):
+            raise AreaError("This status is already set.")
+        self.set_attr("status", value.upper())
