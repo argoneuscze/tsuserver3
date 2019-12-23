@@ -37,12 +37,10 @@ def ooc_cmd_bg(client, background):
     except AreaError:
         raise
     client.area.send_host_message(
-        "{} changed the background to {}.".format(client.get_char_name(), background)
+        f"{client.get_char_name()} changed the background to {background}"
     )
     logger.log_server(
-        "[{}][{}]Changed background to {}".format(
-            client.area.id, client.get_char_name(), background
-        ),
+        f"[{client.area_id}][{client.get_char_name()}]Changed background to {background}",
         client,
     )
 
@@ -54,23 +52,16 @@ def ooc_cmd_status(client, status):
         return
 
     if not status:
-        client.send_host_message(
-            "Current status: {}".format(client.area.get_attr("status"))
-        )
+        client.send_host_message(f"Current status: {client.area.get_attr('status')}")
     else:
         try:
             client.area.change_status(status)
             client.area.send_host_message(
-                "{} changed status to {}.".format(
-                    client.get_char_name(), client.area.get_attr("status")
-                )
+                f"{client.get_char_name()} changed status to {client.area.get_attr('status')}."
             )
             logger.log_server(
-                "[{}][{}]Changed status to {}".format(
-                    client.area.id,
-                    client.get_char_name(),
-                    client.area.get_attr("status"),
-                )
+                f"[{client.area.id}][{client.get_char_name()}]Changed status to {client.area.get_attr('status')}",
+                client,
             )
         except AreaError:
             raise

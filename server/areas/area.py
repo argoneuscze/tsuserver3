@@ -123,7 +123,7 @@ class Area:
         )
         if value.lower() not in allowed_values:
             raise AreaError(
-                "Invalid status. Possible values: {}".format(", ".join(allowed_values))
+                f"Invalid status. Possible values: {', '.join(allowed_values)}"
             )
         if value == self.get_attr("status"):
             raise AreaError("This status is already set.")
