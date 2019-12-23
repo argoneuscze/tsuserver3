@@ -116,10 +116,8 @@ class Area:
     def change_status(self, value):
         allowed_values = (
             "idle",
-            "building-open",
-            "building-full",
-            "casing-open",
-            "casing-full",
+            "building",
+            "casing",
             "recess",
         )
         if value.lower() not in allowed_values:
@@ -129,7 +127,9 @@ class Area:
         if value == self.get_attr("status"):
             raise AreaError("This status is already set.")
         self.set_attr("status", value.upper())
+        self.server.send_arup_status()
 
     def change_cm(self, name):
         name = name[:20]
         self.set_attr("case.master", name)
+        self.server.send_arup_cm()

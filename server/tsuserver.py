@@ -104,6 +104,7 @@ class TsuServer3:
     def remove_client(self, client):
         client.area.remove_client(client)
         self.client_manager.remove_client(client)
+        self.send_arup_all()
 
     def get_player_count(self):
         return len(self.client_manager.clients)
@@ -183,3 +184,20 @@ class TsuServer3:
             self.district_client.send_raw_message(
                 "NEED#{}#{}#{}#{}".format(char_name, area_name, area_id, msg)
             )
+
+    def send_arup_players(self):
+        area_players = [len(area.clients) for area in self.area_manager.areas]
+        self.send_all_cmd_pred("ARUP", 0, *area_players)
+
+    def send_arup_status(self):
+        area_statuses = [area.get_attr("status") for area in self.area_manager.areas]
+        self.send_all_cmd_pred("ARUP", 1, *area_statuses)
+
+    def send_arup_cm(self):
+        area_cms = [area.get_attr("case.master") for area in self.area_manager.areas]
+        self.send_all_cmd_pred("ARUP", 2, *area_cms)
+
+    def send_arup_all(self):
+        self.send_arup_players()
+        self.send_arup_status()
+        self.send_arup_cm()

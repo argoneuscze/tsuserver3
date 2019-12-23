@@ -124,6 +124,7 @@ class Client:
         self.send_command("HP", 1, self.area.get_attr("health.defense"))
         self.send_command("HP", 2, self.area.get_attr("health.prosecution"))
         self.send_command("BN", self.area.get_attr("background.name"))
+        self.server.send_arup_players()
 
     def send_area_list(self):
         msg = "=== Areas ==="
@@ -173,12 +174,6 @@ class Client:
         self.send_command("HP", 2, self.area.get_attr("health.prosecution"))
         self.send_command("BN", self.area.get_attr("background.name"))
         self.send_command("MM", 1)
-
-        # TODO debug
-        self.send_command("ARUP", 0, 1, 0, 0)
-        self.send_command("ARUP", 1, "IDLE", "IDLE", "IDLE")
-        self.send_command("ARUP", 2, "IDLE", "IDLE", "IDLE")
-        self.send_command("ARUP", 3, "IDLE", "IDLE", "IDLE")
 
         self.send_command("DONE")
 
