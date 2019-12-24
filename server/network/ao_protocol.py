@@ -226,7 +226,6 @@ class AOProtocol(asyncio.Protocol):
         """
         self.client.send_done()
         self.server.send_arup_all()
-        self.client.send_area_list()
         self.client.send_motd()
 
     def net_cmd_cc(self, args):

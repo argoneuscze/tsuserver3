@@ -126,15 +126,6 @@ class Client:
         self.send_command("BN", self.area.get_attr("background.name"))
         self.server.send_arup_players()
 
-    def send_area_list(self):
-        msg = "=== Areas ==="
-        for i, area in enumerate(self.server.area_manager.areas):
-            msg += "\r\nArea {}: {} (users: {})".format(i, area.name, len(area.clients))
-            if self.area == area:
-                msg += " [*]"
-            msg += "\r\n[{}]".format(area.get_attr("status"))
-        self.send_host_message(msg)
-
     def get_area_info(self, area_id):
         info = ""
         try:
@@ -145,7 +136,7 @@ class Client:
         sorted_clients = sorted(area.clients, key=lambda x: x.get_char_name())
         for c in sorted_clients:
             info += "\r\n{}".format(c.get_char_name())
-            if self.is_mod:
+            if self.get_attr("is_moderator"):
                 info += " ({})".format(c.get_ip())
         return info
 

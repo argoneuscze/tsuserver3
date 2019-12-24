@@ -111,3 +111,17 @@ def ooc_cmd_pos(client, position):
         except ClientError:
             raise
         client.send_host_message("Position changed.")
+
+
+@arguments(id=(Type.Integer, [Flag.Optional]))
+def ooc_cmd_getarea(client, id):
+    if not id:
+        try:
+            client.send_area_info(client.area.id)
+        except AreaError:
+            raise
+    else:
+        try:
+            client.send_area_info(id)
+        except AreaError:
+            raise

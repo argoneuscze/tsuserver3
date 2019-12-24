@@ -24,7 +24,7 @@ to be user will be the outermost failing decorator.
 
 import functools
 
-from server.ooc_commands.argument_types import Flag
+from server.ooc_commands.argument_types import Flag, Type
 from server.util.exceptions import ClientError, ArgumentError, AreaError
 
 
@@ -65,8 +65,14 @@ def arguments(**arg_kwargs):
             if len(spl) == 2:
                 rest = spl[1]
 
-        # TODO parse arg according to arg_type
-        return arg, rest
+        if arg_type == Type.Integer:
+            try:
+                val = int(arg)
+                return val, rest
+            except ValueError:
+                raise ArgumentError("Expected a numeric argument.")
+        else:
+            return arg, rest
 
     def arguments_func(f):
         @functools.wraps(f)
