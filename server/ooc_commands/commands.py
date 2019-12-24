@@ -16,9 +16,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from server.ooc_commands.argument_types import Type, Flag
-from server.ooc_commands.decorators import arguments, casing_area_only
+from server.ooc_commands.decorators import arguments, casing_area_only, mod_only
 from server.util import logger
-from server.util.exceptions import ClientError, AreaError, ArgumentError
+from server.util.exceptions import ClientError, AreaError, ArgumentError, ServerError
 
 
 @arguments(password=Type.String)
@@ -55,8 +55,8 @@ def ooc_cmd_bg(client, background):
     )
 
 
-@arguments(status=(Type.String, [Flag.Optional]))
 @casing_area_only
+@arguments(status=(Type.String, [Flag.Optional]))
 def ooc_cmd_status(client, status):
     if not status:
         client.send_host_message(f"Current status: {client.area.get_attr('status')}")
@@ -74,8 +74,8 @@ def ooc_cmd_status(client, status):
             raise
 
 
-@arguments(name=(Type.String, [Flag.Optional]))
 @casing_area_only
+@arguments(name=(Type.String, [Flag.Optional]))
 def ooc_cmd_cm(client, name):
     if not name:
         client.send_host_message(
@@ -96,8 +96,8 @@ def ooc_cmd_cm(client, name):
         raise
 
 
-@arguments()
 @casing_area_only
+@arguments()
 def ooc_cmd_clearcm(client):
     try:
         client.area.change_cm("None")
@@ -165,3 +165,61 @@ def ooc_cmd_pm(client, arg):
             ),
             client,
         )
+
+
+@mod_only
+@arguments(arg=(Type.String, [Flag.Multiword]))
+def ooc_cmd_kick(client, arg):
+    targets = client.server.client_manager.get_targets(client, arg)
+    if targets:
+        for c in targets:
+            logger.log_server("Kicked {}.".format(c.get_ip()), client)
+            c.disconnect()
+        client.send_host_message("Kicked {} client(s).".format(len(targets)))
+    else:
+        client.send_host_message("No targets found.")
+
+
+@mod_only
+@arguments(arg=(Type.String, [Flag.Multiword]))
+def ooc_cmd_mute(client, arg):
+    targets = client.server.client_manager.get_targets(client, arg)
+    if targets:
+        for c in targets:
+            logger.log_server("Muted {}.".format(c.get_ip()), client)
+            c.set_attr("ic.muted", True)
+        client.send_host_message("Muted {} client(s).".format(len(targets)))
+    else:
+        client.send_host_message("No targets found.")
+
+
+@mod_only
+@arguments(arg=(Type.String, [Flag.Multiword]))
+def ooc_cmd_unmute(client, arg):
+    targets = client.server.client_manager.get_targets(client, arg)
+    if targets:
+        for c in targets:
+            logger.log_server("Unmuted {}.".format(c.get_ip()), client)
+            c.set_attr("ic.muted", False)
+        client.send_host_message("Unmuted {} client(s).".format(len(targets)))
+    else:
+        client.send_host_message("No targets found.")
+
+
+@mod_only
+@arguments(ip=Type.String)
+def ooc_cmd_banip(client, ip):
+    ip = ip.strip()
+    if len(ip) < 7:
+        raise ArgumentError("You must specify an IP.")
+    try:
+        client.server.ban_manager.add_ban(ip)
+    except ServerError:
+        raise
+    targets = client.server.client_manager.get_targets_by_ip(ip)
+    if targets:
+        for c in targets:
+            c.disconnect()
+        client.send_host_message("Kicked {} existing client(s).".format(len(targets)))
+    client.send_host_message("Added {} to the banlist.".format(ip))
+    logger.log_server("Banned {}.".format(ip), client)
