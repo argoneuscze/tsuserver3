@@ -21,10 +21,6 @@ from enum import Enum, auto
 class Type(Enum):
     Integer = auto()
     String = auto()
-    TargetAny = auto()
-    TargetStatic = auto()
-    TargetDynamic = auto()
-    CustomFunction = auto()
 
 
 class Flag(Enum):

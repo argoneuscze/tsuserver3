@@ -43,13 +43,13 @@ class ClientManager:
     def get_targets_by_ooc_name(self, name):
         clients = []
         for client in self.clients:
-            if client.name == name:
+            if client.get_attr("ooc.name") == name:
                 clients.append(client)
         return clients
 
     def get_targets(self, client, target):
         # check if it's IP but only if mod
-        if client.is_mod:
+        if client.get_attr("is_moderator"):
             clients = self.get_targets_by_ip(target)
             if clients:
                 return clients

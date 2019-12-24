@@ -18,7 +18,7 @@
 from server.ooc_commands.argument_types import Type, Flag
 from server.ooc_commands.decorators import arguments, casing_area_only
 from server.util import logger
-from server.util.exceptions import ClientError, AreaError
+from server.util.exceptions import ClientError, AreaError, ArgumentError
 
 
 @arguments(password=Type.String)
@@ -135,3 +135,33 @@ def ooc_cmd_getarea(client, id):
             client.send_area_info(id)
         except AreaError:
             raise
+
+
+@arguments(arg=(Type.String, [Flag.Multiword]))
+def ooc_cmd_pm(client, arg):
+    spl = arg.split(":", maxsplit=1)
+    if len(spl) != 2:
+        raise ArgumentError("Bad format. Syntax: /pm target: message")
+    spl = [x.strip() for x in spl]
+    target, msg = spl
+
+    target_clients = client.server.client_manager.get_targets(client, target)
+    if not target_clients:
+        client.send_host_message("No targets found.")
+    else:
+        client.send_host_message(f"PM sent to {len(target_clients)} users: {msg}")
+        for c in target_clients:
+            c.send_host_message(
+                "PM received from {} ({}) in {}: {}".format(
+                    client.get_attr("ooc.name"),
+                    client.get_char_name(),
+                    client.area.get_attr("name"),
+                    msg,
+                )
+            )
+        logger.log_server(
+            "[{}][{}]Sent PM to {}: {}".format(
+                client.area.id, client.get_char_name(), target, msg
+            ),
+            client,
+        )
