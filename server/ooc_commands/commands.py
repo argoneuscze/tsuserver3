@@ -21,6 +21,16 @@ from server.util import logger
 from server.util.exceptions import ClientError, AreaError
 
 
+@arguments(password=Type.String)
+def ooc_cmd_login(client, password):
+    try:
+        client.auth_mod(password)
+    except ClientError:
+        raise
+    client.send_host_message("Logged in as a moderator.")
+    logger.log_server("Logged in as moderator.", client)
+
+
 @arguments(background=(Type.String, [Flag.Optional]))
 def ooc_cmd_bg(client, background):
     if not background:

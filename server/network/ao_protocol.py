@@ -529,7 +529,6 @@ class AOProtocol(asyncio.Protocol):
         self.client.send_host_message("Moderator called.")
         self.server.send_all_cmd_pred(
             "ZZ",
-            msg,
             "{} ({}) in {} ({}): {}".format(
                 self.client.get_char_name(),
                 self.client.get_ip(),
