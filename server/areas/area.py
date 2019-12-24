@@ -19,6 +19,7 @@ import asyncio
 import random
 import time
 
+from server.areas.evidence_manager import EvidenceManager
 from server.util.attributes import set_dict_attribute, get_dict_attribute
 from server.util.exceptions import AreaError
 
@@ -40,6 +41,7 @@ class Area:
         self.id = area_id
         self.name = name
         self.server = server
+        self.evidence_manager = EvidenceManager()
         self.music_looper = None
         self.next_message_time = 0
         self._attributes = default_attributes(name, background, bg_lock, is_casing)
@@ -73,6 +75,12 @@ class Area:
 
     def send_host_message(self, msg):
         self.send_command("CT", self.server.config["hostname"], msg)
+
+    def send_evidence_list(self):
+        evi_list = self.evidence_manager.get_evidence_list()
+        evi_packet = ["&".join(x) for x in evi_list]
+        for c in self.clients:
+            c.send_command("LE", *evi_packet)
 
     def set_next_msg_delay(self, msg_length):
         delay = min(3000, 100 + 50 * msg_length)

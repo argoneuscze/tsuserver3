@@ -121,9 +121,11 @@ class Client:
             ),
             self,
         )
+
         self.send_command("HP", 1, self.area.get_attr("health.defense"))
         self.send_command("HP", 2, self.area.get_attr("health.prosecution"))
         self.send_command("BN", self.area.get_attr("background.name"))
+        self.send_evidence_list()
         self.server.send_arup_players()
 
     def get_area_info(self, area_id):
@@ -153,6 +155,11 @@ class Client:
             info += "\r\n{}".format(self.get_area_info(i))
         self.send_host_message(info)
 
+    def send_evidence_list(self):
+        evi_list = self.area.evidence_manager.get_evidence_list()
+        evi_packet = ["&".join(x) for x in evi_list]
+        self.send_command("LE", *evi_packet)
+
     def send_done(self):
         avail_char_ids = set(range(len(self.server.char_list))) - set(
             [x.char_id for x in self.area.clients]
@@ -165,6 +172,7 @@ class Client:
         self.send_command("HP", 2, self.area.get_attr("health.prosecution"))
         self.send_command("BN", self.area.get_attr("background.name"))
         self.send_command("MM", 1)
+        self.send_evidence_list()
 
         self.send_command("DONE")
 

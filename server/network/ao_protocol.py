@@ -343,7 +343,9 @@ class AOProtocol(asyncio.Protocol):
         showname = showname[:15]
 
         msg = text[:256]
-        evidence = 0  # TODO implement evidence
+
+        if not self.client.area.evidence_manager.is_valid_evidence(evidence):
+            return
 
         # TODO pair things
         charid_pair = -1
@@ -502,19 +504,41 @@ class AOProtocol(asyncio.Protocol):
         """ Adds a piece of evidence. TODO
         PE#<name:string>#<description:string>#<image:string>#%
         """
-        ...
+        if not self.validate_net_cmd(
+            args, self.ArgType.STR, self.ArgType.STR, self.ArgType.STR
+        ):
+            return
+        try:
+            self.client.area.evidence_manager.add_evidence(*args)
+        except AreaError as e:
+            self.client.send_host_message(e)
+        self.client.area.send_evidence_list()
 
     def net_cmd_de(self, args):
         """ Deletes a piece of evidence. TODO
         DE#<id:int>#%
         """
-        ...
+        if not self.validate_net_cmd(args, self.ArgType.INT):
+            return
+        idx = int(args[0])
+        self.client.area.evidence_manager.delete_evidence(idx)
+        self.client.area.send_evidence_list()
 
     def net_cmd_ee(self, args):
         """ Edits a piece of evidence. TODO
         EE#<id:int>#<name:string>#<description:string>#<image:string>#%
         """
-        ...
+        if not self.validate_net_cmd(
+            args,
+            self.ArgType.INT,
+            self.ArgType.STR,
+            self.ArgType.STR,
+            self.ArgType.STR,
+        ):
+            return
+        idx = int(args[0])
+        self.client.area.evidence_manager.edit_evidence(idx, *args[1:])
+        self.client.area.send_evidence_list()
 
     def net_cmd_zz(self, args):
         """ Sent on mod call.
