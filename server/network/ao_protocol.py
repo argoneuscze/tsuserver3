@@ -401,9 +401,8 @@ class AOProtocol(asyncio.Protocol):
         """
         if not self.validate_net_cmd(args, self.ArgType.STR, self.ArgType.STR):
             return
-        ooc_name = self.client.get_attr("ooc.name")
-        if ooc_name is None:
-            ooc_name = args[0]
+        ooc_name = args[0]
+        if self.client.get_attr("ooc.name") != ooc_name:
             self.client.set_attr("ooc.name", ooc_name)
         if ooc_name.startswith(self.server.config["hostname"]) or ooc_name.startswith(
             "<dollar>G"
