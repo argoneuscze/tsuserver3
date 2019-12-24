@@ -45,11 +45,36 @@ Items marked with [x] are currently in progress.
 
 ### User Commands
 
-* 
+* **/help**
+  * Shows a link to this page.
+* **/pos [position]**
+  * If an argument is provided, changes your position to a new one, otherwise resets it to default.
+  * Allowed positions: `def`, `pro`, `jud`, `wit`, `hld`, `hlp`
+* **/bg [background]**
+  * If an argument is provided, changes the background, otherwise
+* **/status [status]**
+  * If an argument is provided, changes the current area status, otherwise tells you the current status.
+* **/cm [name]**
+  * If an argument is provided, changes the current area's CM, otherwise tells you who it is.
+* **/clearcm**
+  * Clears the CM of the current area.
+* **/getarea**
+  * Shows you a list of the characters in your current area.
+* **/pm \<target>: \<message>**
+  * Private message, matches first in order character name -> OOC name.
 
 ### Mod Commands
 
-* 
+* **/login \<password>**
+  * Authenticates you as moderator.
+* **/kick \<target>**
+  * Kicks the target from the server.
+* **/mute \<target>**
+  * Prevents the target from talking IC.
+* **/unmute \<target>**
+  * Unmutes the target.
+* **/banip \<IP>**
+  * Adds the specified IP to the banlist and kicks all players using this IP.
 
 ## License
 

@@ -21,6 +21,15 @@ from server.util import logger
 from server.util.exceptions import ClientError, AreaError, ArgumentError, ServerError
 
 
+@arguments()
+def ooc_cmd_help(client):
+    client.send_host_message(
+        "To view the available commands, please check the official GitHub: {}".format(
+            "https://github.com/argoneuscze/tsuserver3_origin"
+        )
+    )
+
+
 @arguments(password=Type.String)
 def ooc_cmd_login(client, password):
     try:
