@@ -31,7 +31,7 @@ def default_attributes(name, background, bg_lock, is_casing):
         "is_casing": is_casing,
         "background": {"name": background, "locked": bg_lock},
         "health": {"defense": 10, "prosecution": 10},
-        "case": {"master": "None", "document": "None"},
+        "case": {"master": "None", "document": "No document."},
     }
 
 
