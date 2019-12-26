@@ -54,6 +54,10 @@ Items marked with [x] are currently in progress.
   * If an argument is provided, changes the background, otherwise
 * **/status [status]**
   * If an argument is provided, changes the current area status, otherwise tells you the current status.
+* **/doc [url]**
+  * If an argument is provided, changes the current area's document, otherwise gives you the current one.
+* **/cleardoc**
+  * Clears the document of the current area.
 * **/cm [name]**
   * If an argument is provided, changes the current area's CM, otherwise tells you who it is.
 * **/clearcm**

@@ -84,6 +84,43 @@ def ooc_cmd_status(client, status):
 
 
 @casing_area_only
+@arguments(url=(Type.String, [Flag.Optional]))
+def ooc_cmd_doc(client, url):
+    if not url:
+        doc = client.area.get_attr("case.document")
+        client.send_host_message("Document: {}".format(doc))
+        logger.log_server(
+            "[{}][{}]Requested document. Link: {}".format(
+                client.area.id, client.get_char_name(), doc
+            )
+        )
+    else:
+        client.area.change_doc(url)
+        client.area.send_host_message(
+            "{} changed the doc link.".format(client.get_char_name())
+        )
+        logger.log_server(
+            "[{}][{}]Changed document to: {}".format(
+                client.area.id, client.get_char_name(), url
+            )
+        )
+
+
+@casing_area_only
+@arguments()
+def ooc_cmd_cleardoc(client):
+    client.area.change_doc()
+    client.send_host_message("Document cleared.")
+    logger.log_server(
+        "[{}][{}]Cleared document. Old link: {}".format(
+            client.area.id,
+            client.get_char_name(),
+            client.area.get_attr("case.document"),
+        )
+    )
+
+
+@casing_area_only
 @arguments(name=(Type.String, [Flag.Optional]))
 def ooc_cmd_cm(client, name):
     if not name:

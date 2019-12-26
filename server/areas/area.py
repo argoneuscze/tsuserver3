@@ -31,7 +31,7 @@ def default_attributes(name, background, bg_lock, is_casing):
         "is_casing": is_casing,
         "background": {"name": background, "locked": bg_lock},
         "health": {"defense": 10, "prosecution": 10},
-        "case": {"master": "None"},
+        "case": {"master": "None", "document": "None"},
     }
 
 
@@ -141,3 +141,6 @@ class Area:
         name = name[:20]
         self.set_attr("case.master", name)
         self.server.send_arup_cm()
+
+    def change_doc(self, url="No document."):
+        self.set_attr("case.document", url)
