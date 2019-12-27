@@ -30,6 +30,16 @@ def ooc_cmd_help(client):
     )
 
 
+@arguments()
+def ooc_cmd_dc(client):
+    ip = client.get_ip()
+    other_clients = client.server.client_manager.get_targets_by_ip(ip)
+    for target in other_clients:
+        if target != client:
+            target.disconnect()
+    client.send_host_message("Other clients have been disconnected.")
+
+
 @arguments(password=Type.String)
 def ooc_cmd_login(client, password):
     try:

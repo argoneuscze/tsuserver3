@@ -47,6 +47,8 @@ Items marked with [x] are currently in progress.
 
 * **/help**
   * Shows a link to this page.
+* **/dc**
+  * Disconnects other clients with your IP from the server. Useful if your client crashes.
 * **/pos [position]**
   * If an argument is provided, changes your position to a new one, otherwise resets it to default.
   * Allowed positions: `def`, `pro`, `jud`, `wit`, `hld`, `hlp`
