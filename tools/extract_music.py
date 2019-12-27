@@ -8,7 +8,6 @@
 #   - YAML with categories and songs with correct timing
 #   - Folder containing selected songs (if copying)
 
-import math
 import os
 import sys
 from shutil import copyfile
@@ -44,7 +43,7 @@ for item in yaml_data:
 
         tgt_file = f"{name}.{song_list[name]}"
         tag = TinyTag.get(os.path.join(song_folder, tgt_file))
-        song["length"] = math.ceil(tag.duration)
+        song["length"] = tag.duration
 
         # copy file
         if copy_dir:
