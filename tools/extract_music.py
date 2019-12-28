@@ -43,7 +43,7 @@ for item in yaml_data:
 
         tgt_file = f"{name}.{song_list[name]}"
         tag = TinyTag.get(os.path.join(song_folder, tgt_file))
-        song["length"] = tag.duration
+        song["length"] = round(tag.duration, 2)
 
         # copy file
         if copy_dir:
