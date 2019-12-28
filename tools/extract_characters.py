@@ -10,7 +10,7 @@ target_file = sys.argv[2]
 
 char_list = []
 for path in os.listdir(char_folder):
-    if os.path.isdir(path):
+    if os.path.isdir(os.path.join(char_folder, path)):
         char_list.append(path)
 
 with open(target_file, "w") as out_yaml:
