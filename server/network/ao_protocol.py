@@ -174,7 +174,23 @@ class AOProtocol(asyncio.Protocol):
 
         client, version = args
 
-        if client == "AO2":
+        if client == "AOClassic":
+            # TODO remove this once FL gets removed
+            self.client.send_command(
+                "FL",
+                "yellowtext",
+                "customobjections",
+                "flipping",
+                "fastloading",
+                "noencryption",
+                "deskmod",
+                "evidence",
+                "cccc_ic_support",
+                "arup",
+                "casing_alerts",
+                "modcall_reason",
+            )
+        elif client == "AO2":
             # TODO remove this once AO2 gets rid of FL
             self.client.send_command(
                 "FL",
