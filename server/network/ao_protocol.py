@@ -172,9 +172,10 @@ class AOProtocol(asyncio.Protocol):
         ):
             self.client.disconnect()
 
-        client, version = args
+        software, version = args
+        self.client.software = software
 
-        if client == "AOClassic":
+        if software == "AOClassic":
             # TODO remove this once FL gets removed
             self.client.send_command(
                 "FL",
@@ -190,7 +191,7 @@ class AOProtocol(asyncio.Protocol):
                 "casing_alerts",
                 "modcall_reason",
             )
-        elif client == "AO2":
+        elif software == "AO2":
             # TODO remove this once AO2 gets rid of FL
             self.client.send_command(
                 "FL",

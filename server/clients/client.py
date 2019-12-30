@@ -37,6 +37,7 @@ class Client:
         self.char_id = -1
         self.area = area
         self.server = server
+        self.software = None
         self._attributes = default_attributes()
 
     def _send_raw_message(self, msg):
@@ -91,6 +92,8 @@ class Client:
             raise
 
     def change_area(self, area):
+        if self.software != "AOClassic":
+            raise ClientError("To change areas, you must use the AO Classic client.")
         if self.area == area:
             raise ClientError("You are already in this area.")
         old_area = self.area
