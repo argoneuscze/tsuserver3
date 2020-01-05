@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import random
 
 from server.ooc_commands.argument_types import Type, Flag
 from server.ooc_commands.decorators import arguments, casing_area_only, mod_only
@@ -221,6 +222,39 @@ def ooc_cmd_pm(client, arg):
             ),
             client,
         )
+
+
+@arguments(die_size=(Type.Integer, [Flag.Optional]))
+def ooc_cmd_roll(client, die_size):
+    roll_max = 11037
+    if die_size is not None:
+        if not 1 <= die_size <= roll_max:
+            raise ArgumentError("Roll value must be between 1 and {}.".format(roll_max))
+    else:
+        die_size = 6
+    roll = random.randint(1, die_size)
+    client.area.send_host_message(
+        "{} rolled {} out of {}.".format(client.get_char_name(), roll, die_size)
+    )
+    logger.log_server(
+        "[{}][{}]Used /roll and got {} out of {}.".format(
+            client.area.id, client.get_char_name(), roll, die_size
+        )
+    )
+
+
+@arguments()
+def ooc_cmd_coinflip(client):
+    coin = ["heads", "tails"]
+    flip = random.choice(coin)
+    client.area.send_host_message(
+        "{} flipped a coin and got {}.".format(client.get_char_name(), flip)
+    )
+    logger.log_server(
+        "[{}][{}]Used /coinflip and got {}.".format(
+            client.area.id, client.get_char_name(), flip
+        )
+    )
 
 
 @mod_only
