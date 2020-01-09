@@ -25,8 +25,8 @@ from server.util.exceptions import ClientError, AreaError, ArgumentError, Server
 @arguments()
 def ooc_cmd_help(client):
     client.send_host_message(
-        "To view the available commands, please check the official GitHub: {}".format(
-            "https://github.com/argoneuscze/tsuserver3_origin"
+        "For help, see the official GitHub pages:\nCommands: {} \nClient: {}".format(
+            "http://bit.ly/37QJny3", "http://bit.ly/37S3jR6"
         )
     )
 
