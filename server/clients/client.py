@@ -22,7 +22,14 @@ from server.util.exceptions import ClientError, AreaError
 def default_attributes():
     return {
         "is_moderator": False,
-        "ic": {"position": "", "muted": False},
+        "ic": {
+            "position": "",
+            "muted": False,
+            "folder": "",
+            "last_emote": "",
+            "flipped": False,
+            "pairing": {"target_char_id": -1, "offset": 0},
+        },
         "ooc": {"name": None},
         "global": {"muted": False},
         "adverts": {"muted": False},

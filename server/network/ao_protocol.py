@@ -350,8 +350,11 @@ class AOProtocol(asyncio.Protocol):
 
         if cur_pos := self.client.get_attr("ic.position"):
             pos = cur_pos
-        if pos not in ("def", "pro", "hld", "hlp", "jud", "wit"):
-            return
+        else:
+            try:
+                self.client.change_position(pos)
+            except ClientError:
+                return
 
         button = int(button)
         if button not in (0, 1, 2, 3, 4):
@@ -364,14 +367,37 @@ class AOProtocol(asyncio.Protocol):
         if not self.client.area.evidence_manager.is_valid_evidence(evidence):
             return
 
-        # TODO pair things
-        charid_pair = -1
-        offset_pair = 0
+        self.client.set_attr("ic.pairing.target_char_id", charid_pair)
+        self.client.set_attr("ic.pairing.offset", offset_pair)
+        if anim_type not in (5, 6):
+            self.client.set_attr("ic.last_emote", anim)
+        self.client.set_attr("ic.flipped", flip)
+        self.client.set_attr("ic.folder", folder)
 
+        # Pairing
         other_offset = 0
         other_emote = ""
         other_flip = 0
         other_folder = ""
+
+        paired = False
+        if charid_pair > -1:
+            for tgt in self.client.area.clients:
+                if (
+                    tgt.char_id == self.client.get_attr("ic.pairing.target_char_id")
+                    and tgt.get_attr("ic.pairing.target_char_id") == self.client.char_id
+                    and tgt != self.client
+                    and tgt.get_attr("ic.position") == pos
+                ):
+                    paired = True
+                    other_offset = tgt.get_attr("ic.pairing.offset")
+                    other_emote = tgt.get_attr("ic.last_emote")
+                    other_flip = tgt.get_attr("ic.flipped")
+                    other_folder = tgt.get_attr("ic.folder")
+                    break
+        if not paired:
+            charid_pair = -1
+            offset_pair = 0
 
         self.client.area.send_command(
             "MS",
