@@ -146,10 +146,7 @@ class AOProtocol(asyncio.Protocol):
             "ID", self.client.id, self.server.software, version_string
         )
         self.client.send_command(
-            # "PN", self.server.get_player_count() - 1, self.server.config["playerlimit"]
-            "PN",
-            11037,
-            11037,
+            "PN", self.server.get_player_count() - 1, self.server.config["playerlimit"]
         )
 
     def net_cmd_ch(self, _):
