@@ -1,4 +1,5 @@
 hostname: <dollar>H
+globalname: <dollar>G
 playerlimit: 100
 port: 27016
 local: false

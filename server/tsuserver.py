@@ -159,30 +159,15 @@ class TsuServer3:
 
     def broadcast_global(self, client, msg, as_mod=False):
         char_name = client.get_char_name()
-        ooc_name = "{}[{}][{}]".format("<dollar>G", client.area.id, char_name)
+        ooc_name = "{}[{}][{}]".format(
+            self.config["globalname"], client.area.id, char_name
+        )
         if as_mod:
             ooc_name += "[M]"
-        self.send_all_cmd_pred("CT", ooc_name, msg, pred=lambda x: not x.muted_global)
+        self.send_all_cmd_pred("CT", ooc_name, msg)
         if self.config["use_district"]:
             self.district_client.send_raw_message(
                 "GLOBAL#{}#{}#{}#{}".format(int(as_mod), client.area.id, char_name, msg)
-            )
-
-    def broadcast_need(self, client, msg):
-        char_name = client.get_char_name()
-        area_name = client.area.name
-        area_id = client.area.id
-        self.send_all_cmd_pred(
-            "CT",
-            "{}".format(self.config["hostname"]),
-            "=== Advert ===\r\n{} in {} [{}] needs {}\r\n===============".format(
-                char_name, area_name, area_id, msg
-            ),
-            pred=lambda x: not x.muted_adverts,
-        )
-        if self.config["use_district"]:
-            self.district_client.send_raw_message(
-                "NEED#{}#{}#{}#{}".format(char_name, area_name, area_id, msg)
             )
 
     def send_arup_players(self):

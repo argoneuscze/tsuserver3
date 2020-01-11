@@ -257,6 +257,15 @@ def ooc_cmd_coinflip(client):
     )
 
 
+@arguments(text=Type.String)
+def ooc_cmd_g(client, text):
+    client.server.broadcast_global(client, text)
+    logger.log_server(
+        "[{}][{}][GLOBAL]{}.".format(client.area.id, client.get_char_name(), text),
+        client,
+    )
+
+
 @mod_only
 @arguments(arg=(Type.String, [Flag.Multiword]))
 def ooc_cmd_kick(client, arg):
