@@ -68,6 +68,12 @@ Items marked with [x] are currently in progress.
   * Shows you a list of the characters in your current area.
 * **/pm \<target>: \<message>**
   * Private message, matches first in order character name -> OOC name.
+* **/g \<message>**
+  * Global chat, shared between all areas.
+* **/roll [maxvalue]**
+  * Diee roll, default value is 6.
+* **/coinflip**
+  * Heads or tails.
 
 ### Mod Commands
 
