@@ -94,7 +94,7 @@ def arguments(**arg_kwargs):
                     if not optional:
                         raise ArgumentError("Not enough arguments.")
                     else:
-                        parsed_args[name] = ""
+                        parsed_args[name] = None
                         continue
 
                 try:
